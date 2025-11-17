@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    // Google services plugin requiere google-services.json; en CI generamos stub si falta.
     alias(libs.plugins.google.services)
 }
 
@@ -35,6 +36,11 @@ android {
     }
     kotlinOptions { jvmTarget = "11" }
     buildFeatures { compose = true }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true // Evita NPE en clases Android no mockeadas
+        unitTests.isIncludeAndroidResources = true // Permite Robolectric/composed tests si se agregan
+    }
 }
 
 dependencies {
@@ -80,6 +86,10 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
 
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("io.insert-koin:koin-test-junit4:3.5.6")
+    // Robolectric para futuros tests que necesiten Android framework sin instrumentación
+    testImplementation("org.robolectric:robolectric:4.12.2")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -27,7 +27,29 @@ workflows:
                   echo "$GOOGLE_SERVICES_JSON_B64" | base64 --decode > app/google-services.json
                   echo "google-services.json restored from secret"
                 else
-                  echo "No GOOGLE_SERVICES_JSON_B64 secret; relying on skip verify for unit tests"
+                  # Crear stub mínimo para que el plugin no falle
+                  cat > app/google-services.json <<'EOF'
+                  {
+                    "project_info": {
+                      "project_number": "123456789012",
+                      "project_id": "stub-project",
+                      "storage_bucket": "stub-project.appspot.com"
+                    },
+                    "client": [
+                      {
+                        "client_info": {
+                          "mobilesdk_app_id": "1:123456789012:android:stubstubstub",
+                          "android_client_info": {"package_name": "com.bearkicks.app"}
+                        },
+                        "oauth_client": [],
+                        "api_key": [{"current_key": "STUB_KEY"}],
+                        "services": {"appinvite_service": {"other_platform_oauth_client": []}}
+                      }
+                    ],
+                    "configuration_version": "1"
+                  }
+                  EOF
+                  echo "Stub google-services.json generated"
                 fi
       - script:
           title: Gradle unit tests (debug)

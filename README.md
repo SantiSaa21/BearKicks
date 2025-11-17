@@ -70,11 +70,13 @@ El archivo real está ignorado por `.gitignore`. Para evitar fallo en CI:
 
 - Se añadió lógica en `app/build.gradle.kts` que salta verificación si `CI=true` o `GOOGLE_SERVICES_SKIP_VERIFY=true`.
 - Para pruebas puras de lógica, no es necesario el archivo.
-- Si se requiere Firebase, crea un secreto en Bitrise `GOOGLE_SERVICES_JSON_B64`:
+- Si se requiere Firebase real, crea un secreto en Bitrise `GOOGLE_SERVICES_JSON_B64`:
 	```bash
 	base64 -w0 app/google-services.json > google-services.json.b64
 	# Copiar contenido al secreto
 	```
+
+Si NO configuras el secreto, el workflow genera un stub `google-services.json` con claves ficticias solo para permitir que el plugin compile y ejecutar tests de dominio/UI sin llamadas reales.
 
 ### Comandos locales
 
