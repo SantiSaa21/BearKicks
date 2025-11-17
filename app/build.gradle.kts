@@ -107,24 +107,47 @@ tasks.register("verifyGoogleServices") {
         // is provided through secure env vars or not needed for pure unit tests.
         val isCi = System.getenv("CI")?.equals("true", ignoreCase = true) == true
         val skipFlag = System.getenv("GOOGLE_SERVICES_SKIP_VERIFY")?.equals("true", ignoreCase = true) == true
-        if (!real.exists()) {
-            if (isCi || skipFlag) {
-                logger.warn("[verifyGoogleServices] Missing google-services.json on CI; skipping strict verification.")
-            } else {
-                error("Missing app/google-services.json. Copy app/google-services.sample.json, replace REPLACE_ME with your real API key, and keep the file untracked.")
-            }
-        }
+        val disableFirebaseProp = gradle.startParameter.projectProperties.containsKey("disableFirebase")
+                if (!real.exists()) {
+            if (isCi || skipFlag || disableFirebaseProp) {
+                                // Crear stub para evitar fallo del plugin si se aplica accidentalmente.
+                                logger.warn("[verifyGoogleServices] Missing google-services.json on CI; generating stub.")
+                                real.writeText(
+                                        """
+                                        {
+                                            "project_info": {
+                                                "project_number": "123456789012",
+                                                "project_id": "stub-project",
+                                                "storage_bucket": "stub-project.appspot.com"
+                                            },
+                                            "client": [
+                                                {
+                                                    "client_info": {
+                                                        "mobilesdk_app_id": "1:123456789012:android:stubstubstub",
+                                                        "android_client_info": {"package_name": "com.bearkicks.app"}
+                                                    },
+                                                    "oauth_client": [],
+                                                    "api_key": [{"current_key": "STUB_KEY"}],
+                                                    "services": {"appinvite_service": {"other_platform_oauth_client": []}}
+                                                }
+                                            ],
+                                            "configuration_version": "1"
+                                        }
+                                        """.trimIndent()
+                                )
+                        } else {
+                                error("Missing app/google-services.json. Copy app/google-services.sample.json, replace REPLACE_ME with your real API key, and keep the file untracked.")
+                        }
+                }
     }
 }
 
 // Ensure presence before any build tasks
 tasks.named("preBuild").configure { dependsOn("verifyGoogleServices") }
 
-// Aplicar plugin de Google Services sólo si no se pasa -PdisableFirebase
-gradle.startParameter.projectProperties.let { props ->
-    if (!props.containsKey("disableFirebase")) {
-        plugins.apply("com.google.gms.google-services")
-    } else {
-        logger.warn("Google Services plugin deshabilitado por -PdisableFirebase (tests sin firebase)")
-    }
+// Aplicar plugin Google Services sólo si NO se pasa -PdisableFirebase
+if (!project.hasProperty("disableFirebase")) {
+    plugins.apply("com.google.gms.google-services")
+} else {
+    logger.warn("Google Services plugin deshabilitado por -PdisableFirebase (tests sin Firebase)")
 }

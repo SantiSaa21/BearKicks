@@ -83,7 +83,6 @@ workflows:
           title: Unit tests (disable firebase plugin)
           inputs:
             - content: |-
-                # Ejecutar sólo tests de unidad sin plugin Google Services
                 ./gradlew :app:testDebugUnitTest -PdisableFirebase --stacktrace
       - cache-push: {}
       - deploy-to-bitrise-io:
