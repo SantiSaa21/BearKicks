@@ -1,0 +1,50 @@
+format_version: "11"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+
+project_type: android
+
+workflows:
+  primary:
+    envs:
+      - CI: "true"                      # Ensures build scripts detect CI
+      - GOOGLE_SERVICES_SKIP_VERIFY: "true"  # Skip strict google-services check in unit tests
+      # Optionally provide your google-services.json via Base64 secret
+      # - GOOGLE_SERVICES_JSON_B64: "(set in Bitrise Secrets)"
+    steps:
+      - git-clone: {}
+      - cache-pull: {}
+      - install-missing-android-tools:
+          inputs:
+            - gradlew_path: "./gradlew"
+            - api_level: "34"          # Lower for faster tool install; compileSdk=36 still works with build-tools superset
+            - build_tools: "34.0.0"
+            - ndk_revision: ""
+      - script:
+          title: Restore google-services.json (if provided)
+          inputs:
+            - content: |-
+                if [ -n "$GOOGLE_SERVICES_JSON_B64" ]; then
+                  echo "$GOOGLE_SERVICES_JSON_B64" | base64 --decode > app/google-services.json
+                  echo "google-services.json restored from secret"
+                else
+                  echo "No GOOGLE_SERVICES_JSON_B64 secret; relying on skip verify for unit tests"
+                fi
+      - script:
+          title: Gradle unit tests (debug)
+          inputs:
+            - content: |-
+                ./gradlew testDebugUnitTest --stacktrace
+      - android-build:
+          title: Assemble release AAB
+          inputs:
+            - module: app
+            - variant: release
+      - cache-push: {}
+      - deploy-to-bitrise-io:
+          inputs:
+            - notify_user_groups: ''
+            - notify_email_list: ''
+
+app:
+  envs:
+    - BITRISE_DISTRIBUTION_METHOD: "none"

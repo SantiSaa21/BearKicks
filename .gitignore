@@ -1,0 +1,91 @@
+# === Android / Kotlin / Gradle ===
+.gradle/
+**/build/
+.kotlinc/
+.kotlin/
+.vs/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+out/
+
+# OS / Editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Local SDK & properties
+local.properties
+
+# Keystores (signing)
+*.jks
+*.keystore
+keystore.properties
+
+# Google / Firebase sensitive JSON (keep a sample instead)
+app/google-services.json
+app/firebase-db-export-sample.json
+app/firebase-db-rules.json
+tools/rtdb/*.json
+
+# If you keep a public sample, name it with .sample.json and DO commit that
+*.sample.json
+
+# Environment / secret files
+.env
+.env.*
+*.secret
+secret/**/*.json
+
+# Crashlytics / Mapping
+**/mapping.txt
+**/crashlytics/**
+
+# APK / AAB outputs
+app/release/*.apk
+app/release/*.aab
+*.apk
+*.aab
+
+# Generated navigation / ksp / annotation outputs
+**/generated/
+**/kspCaches/
+
+# Jetpack Compose compiler metrics (if enabled)
+compose_compiler_metrics/
+compose_compiler_reports/
+
+# Lint / Reports
+lint-results*.xml
+lint-results*/
+reports/
+
+# Gradle caches & wrappers (wrapper JAR allowed, but cache dirs ignored)
+!gradle/wrapper/gradle-wrapper.properties
+!gradlew
+!gradlew.bat
+
+# Misc security
+*.pem
+*.crt
+*.der
+*.p12
+
+# SQLite / Room databases created at runtime
+*.db
+*.db-shm
+*.db-wal
+
+# Misc temporary
+tmp/
+.cache/
+
+# Node / tooling (if any future scripts)
+node_modules/
+
+# === END ===
