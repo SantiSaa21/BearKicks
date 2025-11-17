@@ -3,8 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    // Google services plugin requiere google-services.json; en CI generamos stub si falta.
-    alias(libs.plugins.google.services)
+    // Quitamos aplicación directa del plugin de Google Services para poder deshabilitarlo en CI.
 }
 
 android {
@@ -120,3 +119,12 @@ tasks.register("verifyGoogleServices") {
 
 // Ensure presence before any build tasks
 tasks.named("preBuild").configure { dependsOn("verifyGoogleServices") }
+
+// Aplicar plugin de Google Services sólo si no se pasa -PdisableFirebase
+gradle.startParameter.projectProperties.let { props ->
+    if (!props.containsKey("disableFirebase")) {
+        plugins.apply("com.google.gms.google-services")
+    } else {
+        logger.warn("Google Services plugin deshabilitado por -PdisableFirebase (tests sin firebase)")
+    }
+}

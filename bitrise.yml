@@ -67,6 +67,30 @@ workflows:
             - notify_user_groups: ''
             - notify_email_list: ''
 
+  run_tests:
+    envs:
+      - CI: "true"
+      - GOOGLE_SERVICES_SKIP_VERIFY: "true"
+    steps:
+      - git-clone: {}
+      - cache-pull: {}
+      - install-missing-android-tools:
+          inputs:
+            - gradlew_path: "./gradlew"
+            - api_level: "34"
+            - build_tools: "34.0.0"
+      - script:
+          title: Unit tests (disable firebase plugin)
+          inputs:
+            - content: |-
+                # Ejecutar sólo tests de unidad sin plugin Google Services
+                ./gradlew :app:testDebugUnitTest -PdisableFirebase --stacktrace
+      - cache-push: {}
+      - deploy-to-bitrise-io:
+          inputs:
+            - notify_user_groups: ''
+            - notify_email_list: ''
+
 app:
   envs:
     - BITRISE_DISTRIBUTION_METHOD: "none"

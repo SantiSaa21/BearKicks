@@ -83,13 +83,15 @@ Si NO configuras el secreto, el workflow genera un stub `google-services.json` c
 ```powershell
 cd c:\Users\santi\StudioProjects\BearKicks
 ./gradlew testDebugUnitTest
+./gradlew testDebugUnitTest -PdisableFirebase   # Ejecuta tests sin aplicar el plugin Google Services
 ./gradlew assembleRelease
 ```
 
 ### Próximos pasos
 
 - Añadir remoto nuevo: `git remote add origin <URL>` y hacer primer push.
-- Configurar secretos en Bitrise y activar build.
+- Bitrise: usar workflow `run_tests` para sólo tests (usa `-PdisableFirebase`).
+- Para build completa + AAB usar workflow `primary` (requiere secreto Base64 o se generará stub). 
 
 
 CI/CD (opcional):
