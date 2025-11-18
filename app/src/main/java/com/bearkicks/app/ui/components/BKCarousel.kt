@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bearkicks.app.features.home.domain.model.ShoeModel
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 
 @Composable
 fun BKCarousel(
@@ -22,7 +24,7 @@ fun BKCarousel(
 ) {
     BKSection(
         title = title,
-        actionText = if (onSeeAll != null) "Ver todo" else null,
+        actionText = if (onSeeAll != null) stringResource(id = R.string.see_all) else null,
         onAction = onSeeAll
     )
     Spacer(Modifier.height(8.dp))

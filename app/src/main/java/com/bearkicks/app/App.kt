@@ -53,10 +53,10 @@ class App : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 com.bearkicks.app.notifications.PROMO_CHANNEL_ID,
-                "Promociones",
+                getString(com.bearkicks.app.R.string.promo_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "Recordatorios y novedades de BearKicks"
+                description = getString(com.bearkicks.app.R.string.promo_channel_desc)
             }
             val mgr = getSystemService(NotificationManager::class.java)
             mgr.createNotificationChannel(channel)

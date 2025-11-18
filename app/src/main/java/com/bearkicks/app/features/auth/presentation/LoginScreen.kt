@@ -22,6 +22,8 @@ import com.bearkicks.app.ui.components.BKButton
 import com.bearkicks.app.ui.components.BKTextField
 import com.bearkicks.app.ui.components.BKTextFieldSize
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 
 @Composable
 fun LoginScreen(
@@ -39,13 +41,13 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Iniciar sesión", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(id = R.string.auth_login_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(24.dp))
 
         BKTextField(
             value = emailState.value,
             onValueChange = { emailState.value = it },
-            label = "Email",
+            label = stringResource(id = R.string.field_email),
             size = BKTextFieldSize.Medium,
             modifier = Modifier.fillMaxWidth()
         )
@@ -53,7 +55,7 @@ fun LoginScreen(
         BKTextField(
             value = passState.value,
             onValueChange = { passState.value = it },
-            label = "Contraseña",
+            label = stringResource(id = R.string.field_password),
             isPassword = true,
             size = BKTextFieldSize.Medium,
             modifier = Modifier.fillMaxWidth()
@@ -69,10 +71,10 @@ fun LoginScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        BKButton(text = "Entrar", modifier = Modifier.fillMaxWidth()) {
+        BKButton(text = stringResource(id = R.string.auth_login), modifier = Modifier.fillMaxWidth()) {
             viewModel.onLogin(emailState.value, passState.value)
         }
         Spacer(Modifier.height(8.dp))
-        BKButton(text = "Crear cuenta", modifier = Modifier.fillMaxWidth()) { onGoRegister() }
+        BKButton(text = stringResource(id = R.string.auth_create_account), modifier = Modifier.fillMaxWidth()) { onGoRegister() }
     }
 }

@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.bearkicks.app.features.home.domain.model.ShoeModel
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -46,7 +48,7 @@ fun ShoeDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = item?.name ?: "Detalle") },
+                title = { Text(text = item?.name ?: stringResource(id = R.string.detail_title)) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, null) } },
                 actions = {
                     if (item != null) {
@@ -103,12 +105,12 @@ private fun ShoeDetailBody(
             Text(text = item.brand ?: "", style = MaterialTheme.typography.bodyMedium)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(text = "Bs ${"%.2f".format(item.price)}", style = MaterialTheme.typography.titleMedium)
-            item.discountPrice?.let { Text(text = "Oferta: Bs ${"%.2f".format(it)}", style = MaterialTheme.typography.bodyMedium) }
+            Text(text = stringResource(id = R.string.price_bob, "%.2f".format(item.price)), style = MaterialTheme.typography.titleMedium)
+            item.discountPrice?.let { Text(text = stringResource(id = R.string.offer_price_bob, "%.2f".format(it)), style = MaterialTheme.typography.bodyMedium) }
         }
         item.sizes?.takeIf { it.isNotEmpty() }?.let { sizes ->
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Talla", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(id = R.string.label_size), style = MaterialTheme.typography.titleSmall)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -129,10 +131,10 @@ private fun ShoeDetailBody(
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = onToggle) { Text(if (item.isLiked) "Quitar de Favoritos" else "Agregar a Favoritos") }
+            Button(onClick = onToggle) { Text(if (item.isLiked) stringResource(id = R.string.favorite_remove) else stringResource(id = R.string.favorite_add)) }
             val requiresSize = !item.sizes.isNullOrEmpty()
             val canAdd = !inCart && (!requiresSize || selectedSize != null)
-            Button(onClick = onAddToCart, enabled = canAdd) { Text(if (inCart) "En el carrito" else "Añadir al carrito") }
+            Button(onClick = onAddToCart, enabled = canAdd) { Text(if (inCart) stringResource(id = R.string.in_cart) else stringResource(id = R.string.add_to_cart)) }
         }
     }
 }

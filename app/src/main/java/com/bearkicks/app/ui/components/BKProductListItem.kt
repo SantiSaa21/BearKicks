@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -65,7 +66,7 @@ fun BKProductListItem(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Bs ${priceFmt(shoe.price)}",
+                        text = stringResource(id = com.bearkicks.app.R.string.price_bob, priceFmt(shoe.price)),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -82,7 +83,7 @@ fun BKProductListItem(
                 IconButton(onClick = { if (!isLoggedIn) onRequireLogin() else onLikeClick(shoe) }, modifier = Modifier.size(32.dp)) {
                     Icon(
                         imageVector = if (shoe.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorito",
+                        contentDescription = stringResource(id = com.bearkicks.app.R.string.cd_favorite),
                         tint = if (shoe.isLiked) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
                     )
                 }

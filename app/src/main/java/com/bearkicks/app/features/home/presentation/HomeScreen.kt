@@ -23,6 +23,8 @@ import com.bearkicks.app.ui.components.BKCarousel
 import com.bearkicks.app.features.auth.domain.usecase.ObserveAuthStateUseCase
 import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 
 @Composable
 fun HomeScreen(
@@ -64,7 +66,7 @@ fun HomeScreen(
         if (offers.isNotEmpty()) {
             item {
                 BKCarousel(
-                    title = "Ofertas",
+                    title = stringResource(id = R.string.home_offers),
                     items = offers,
                     onLikeClick = { viewModel.onToggleLike(it) },
                     isLoggedIn = currentUser != null,
@@ -79,7 +81,7 @@ fun HomeScreen(
             item {
                 Spacer(Modifier.height(8.dp))
                 BKCarousel(
-                    title = "Novedades",
+                    title = stringResource(id = R.string.home_news),
                     items = news,
                     onLikeClick = { viewModel.onToggleLike(it) },
                     isLoggedIn = currentUser != null,

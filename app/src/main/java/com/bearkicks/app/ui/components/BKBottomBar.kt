@@ -29,10 +29,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.bearkicks.app.ui.theme.BKTheme
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 
 data class BKNavItem(
     val route: String,
-    val label: String,
+    @StringRes val label: Int,
     val icon: ImageVector,
     val selectedIcon: ImageVector? = null,
     val badgeCount: Int = 0
@@ -95,7 +98,7 @@ fun BKBottomBar(
                         ) {
                             Icon(
                                 imageVector = iconVec,
-                                contentDescription = item.label,
+                                contentDescription = stringResource(id = item.label),
                                 tint = if (selected) iconSelected else iconUnselected
                             )
                         }
@@ -106,9 +109,9 @@ fun BKBottomBar(
     }
 }
 val BKDefaultNavItems = listOf(
-    BKNavItem(route = "shop", label = "Shop", icon = Icons.Filled.Store),
-    BKNavItem(route = "wishlist", label = "Wishlist", icon = Icons.Filled.Favorite),
-    BKNavItem(route = "home", label = "Home", icon = Icons.Filled.Home),
-    BKNavItem(route = "cart", label = "Cart", icon = Icons.Filled.ShoppingCart),
-    BKNavItem(route = "profile", label = "Profile", icon = Icons.Filled.Person)
+    BKNavItem(route = "shop", label = R.string.nav_shop, icon = Icons.Filled.Store),
+    BKNavItem(route = "wishlist", label = R.string.nav_wishlist, icon = Icons.Filled.Favorite),
+    BKNavItem(route = "home", label = R.string.nav_home, icon = Icons.Filled.Home),
+    BKNavItem(route = "cart", label = R.string.nav_cart, icon = Icons.Filled.ShoppingCart),
+    BKNavItem(route = "profile", label = R.string.nav_profile, icon = Icons.Filled.Person)
 )

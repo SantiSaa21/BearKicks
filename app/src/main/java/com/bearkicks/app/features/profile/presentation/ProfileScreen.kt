@@ -55,6 +55,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.mutableStateOf
@@ -124,13 +125,13 @@ fun ProfileScreen(onLoggedOut: () -> Unit, onSeeAllOrders: () -> Unit) {
             onVerifyCurrentPassword = { curr, cb -> viewModel.onVerifyCurrentPassword(curr, cb) }
         )
         ProfileUiState.LoggedOut -> Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
-            Text("No has iniciado sesión", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(id = com.bearkicks.app.R.string.profile_logged_out), style = MaterialTheme.typography.titleMedium)
         }
         is ProfileUiState.Error -> Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
             Text(state.message, color = MaterialTheme.colorScheme.error)
         }
         ProfileUiState.Loading -> Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
-            Text("Cargando…")
+            Text(stringResource(id = com.bearkicks.app.R.string.common_loading))
         }
     }
 }
@@ -195,25 +196,25 @@ private fun ProfileContent(
         Card(shape = RoundedCornerShape(18.dp), colors = CardDefaults.cardColors(containerColor = BKNeutral100)) {
             Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 state.user.birthDate?.let { bd ->
-                    InfoRow(icon = Icons.Filled.DateRange, label = "Nacimiento", value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(bd)))
+                    InfoRow(icon = Icons.Filled.DateRange, label = stringResource(id = com.bearkicks.app.R.string.profile_birthdate), value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(bd)))
                 }
                 state.user.phone?.takeIf { it.isNotBlank() }?.let {
-                    InfoRow(icon = Icons.Filled.Phone, label = "Teléfono", value = it)
+                    InfoRow(icon = Icons.Filled.Phone, label = stringResource(id = com.bearkicks.app.R.string.field_phone), value = it)
                 }
-                InfoRow(icon = Icons.Filled.Person, label = "Nombre", value = "${state.user.firstName} ${state.user.lastName}".trim())
+                InfoRow(icon = Icons.Filled.Person, label = stringResource(id = com.bearkicks.app.R.string.field_first_name), value = "${state.user.firstName} ${state.user.lastName}".trim())
                 state.user.address?.takeIf { it.isNotBlank() }?.let {
-                    InfoRow(icon = Icons.Filled.Home, label = "Dirección", value = it)
-                } ?: Text("Agrega tu dirección para envíos", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    InfoRow(icon = Icons.Filled.Home, label = stringResource(id = com.bearkicks.app.R.string.field_address), value = it)
+                } ?: Text(stringResource(id = com.bearkicks.app.R.string.profile_add_address_hint), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
         // Acciones rápidas
         Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = BKBrandSecondary.copy(alpha = 0.55f))) {
             Column(Modifier.fillMaxWidth().padding(8.dp)) {
-                ActionItem(text = "Editar perfil", icon = Icons.Filled.Edit) { editOpen.value = true }
-                ActionItem(text = "Cambiar contraseña", icon = Icons.Filled.Lock) { passwordOpen.value = true }
-                ActionItem(text = "Historial de compras", icon = Icons.Filled.ShoppingBag) { onSeeAllOrders() }
-                ActionItem(text = "Cerrar sesión", icon = Icons.Filled.ExitToApp, danger = true) { onLogout() }
+                ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_edit), icon = Icons.Filled.Edit) { editOpen.value = true }
+                ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_change_password), icon = Icons.Filled.Lock) { passwordOpen.value = true }
+                ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_orders), icon = Icons.Filled.ShoppingBag) { onSeeAllOrders() }
+                ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_logout), icon = Icons.Filled.ExitToApp, danger = true) { onLogout() }
             }
         }
 
@@ -269,7 +270,7 @@ private fun EditProfileDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Editar perfil", style = MaterialTheme.typography.titleMedium) },
+        title = { Text(stringResource(id = com.bearkicks.app.R.string.profile_edit_title), style = MaterialTheme.typography.titleMedium) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 OutlinedTextField(
@@ -279,7 +280,7 @@ private fun EditProfileDialog(
                         firstNameError.value = validateName(it)
                     },
                     isError = firstNameError.value != null,
-                    label = { Text("Nombre") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_first_name)) },
                     leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
                     singleLine = true
                 )
@@ -291,7 +292,7 @@ private fun EditProfileDialog(
                         lastNameError.value = validateLastName(it)
                     },
                     isError = lastNameError.value != null,
-                    label = { Text("Apellido") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_last_name)) },
                     leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
                     singleLine = true
                 )
@@ -303,7 +304,7 @@ private fun EditProfileDialog(
                         phoneError.value = validatePhone(it)
                     },
                     isError = phoneError.value != null,
-                    label = { Text("Teléfono") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_phone)) },
                     leadingIcon = { Icon(Icons.Filled.Phone, contentDescription = null) },
                     singleLine = true
                 )
@@ -315,7 +316,7 @@ private fun EditProfileDialog(
                         addressError.value = validateAddress(it)
                     },
                     isError = addressError.value != null,
-                    label = { Text("Dirección") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_address)) },
                     leadingIcon = { Icon(Icons.Filled.Home, contentDescription = null) }
                 )
                 addressError.value?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
@@ -323,10 +324,10 @@ private fun EditProfileDialog(
         },
         confirmButton = {
             val disabled = listOf(firstNameError.value, lastNameError.value, phoneError.value, addressError.value).any { it != null }
-            TextButton(onClick = { if (!disabled) onSave(firstName.value, lastName.value, phone.value, address.value) }, enabled = !disabled) { Text("Guardar") }
+            TextButton(onClick = { if (!disabled) onSave(firstName.value, lastName.value, phone.value, address.value) }, enabled = !disabled) { Text(stringResource(id = com.bearkicks.app.R.string.common_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancelar") }
+            TextButton(onClick = onDismiss) { Text(stringResource(id = com.bearkicks.app.R.string.common_cancel)) }
         }
     )
 }
@@ -360,7 +361,7 @@ private fun Avatar(url: String?, name: String, onPickPhoto: () -> Unit) {
             } else {
                 AsyncImage(
                     model = url,
-                    contentDescription = "Avatar",
+                    contentDescription = stringResource(id = com.bearkicks.app.R.string.profile_avatar_cd),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
@@ -378,7 +379,7 @@ private fun Avatar(url: String?, name: String, onPickPhoto: () -> Unit) {
                 .clip(CircleShape)
                 .background(BKBrandPrimary)
         ) {
-            Icon(Icons.Filled.PhotoCamera, contentDescription = "Cambiar foto", tint = Color.White)
+            Icon(Icons.Filled.PhotoCamera, contentDescription = stringResource(id = com.bearkicks.app.R.string.profile_change_photo_cd), tint = Color.White)
         }
     }
 }
@@ -402,6 +403,7 @@ private fun ChangePasswordDialog(
     onSubmit: (String, String, String) -> Unit,
     onVerifyCurrent: (String, (Boolean, String?) -> Unit) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val current = rememberSaveable { mutableStateOf("") }
     val newPass = rememberSaveable { mutableStateOf("") }
     val confirm = rememberSaveable { mutableStateOf("") }
@@ -416,13 +418,13 @@ private fun ChangePasswordDialog(
     val scope = rememberCoroutineScope()
     var verifyJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     val statusMessage = result?.fold(
-        onSuccess = { "Contraseña actualizada" },
-        onFailure = { it.message ?: "Error" }
+        onSuccess = { stringResource(id = com.bearkicks.app.R.string.password_updated) },
+        onFailure = { it.message ?: stringResource(id = com.bearkicks.app.R.string.error_generic) }
     )
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Cambiar contraseña") },
+        title = { Text(stringResource(id = com.bearkicks.app.R.string.profile_change_password_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
@@ -446,19 +448,19 @@ private fun ChangePasswordDialog(
                             verifying.value = false
                         }
                     },
-                    label = { Text("Contraseña actual") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_current_password)) },
                     isError = currentError.value != null,
                     singleLine = true,
                     visualTransformation = if (showCurrent.value) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { showCurrent.value = !showCurrent.value }) {
-                            Icon(if (showCurrent.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, contentDescription = if (showCurrent.value) "Ocultar" else "Mostrar")
+                            Icon(if (showCurrent.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, contentDescription = if (showCurrent.value) stringResource(id = com.bearkicks.app.R.string.common_hide) else stringResource(id = com.bearkicks.app.R.string.common_show))
                         }
                     }
                 )
                 when {
-                    verifying.value -> Text("Verificando...", style = MaterialTheme.typography.bodySmall)
-                    currentValid.value && currentError.value == null -> Text("Actual correcta", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
+                    verifying.value -> Text(stringResource(id = com.bearkicks.app.R.string.password_verifying), style = MaterialTheme.typography.bodySmall)
+                    currentValid.value && currentError.value == null -> Text(stringResource(id = com.bearkicks.app.R.string.password_current_ok), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
                     currentError.value != null -> Text(currentError.value!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
                 }
                 OutlinedTextField(
@@ -467,17 +469,17 @@ private fun ChangePasswordDialog(
                         newPass.value = it
                         newError.value = validatePassword(it)
                         if (currentValid.value && it == current.value) {
-                            newError.value = "La nueva contraseña no puede ser igual a la actual"
+                            newError.value = context.getString(com.bearkicks.app.R.string.password_new_same_as_current)
                         }
-                        if (confirm.value.isNotEmpty()) confirmError.value = if (confirm.value == it) null else "No coincide"
+                        if (confirm.value.isNotEmpty()) confirmError.value = if (confirm.value == it) null else context.getString(com.bearkicks.app.R.string.password_confirm_mismatch)
                     },
                     isError = newError.value != null,
-                    label = { Text("Nueva contraseña") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_new_password)) },
                     singleLine = true,
                     visualTransformation = if (showNew.value) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { showNew.value = !showNew.value }) {
-                            Icon(if (showNew.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, contentDescription = if (showNew.value) "Ocultar" else "Mostrar")
+                            Icon(if (showNew.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, contentDescription = if (showNew.value) stringResource(id = com.bearkicks.app.R.string.common_hide) else stringResource(id = com.bearkicks.app.R.string.common_show))
                         }
                     }
                 )
@@ -486,15 +488,15 @@ private fun ChangePasswordDialog(
                     value = confirm.value,
                     onValueChange = {
                         confirm.value = it
-                        confirmError.value = if (it == newPass.value) null else "No coincide"
+                        confirmError.value = if (it == newPass.value) null else context.getString(com.bearkicks.app.R.string.password_confirm_mismatch)
                     },
                     isError = confirmError.value != null,
-                    label = { Text("Confirmar contraseña") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_confirm_password)) },
                     singleLine = true,
                     visualTransformation = if (showConfirm.value) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { showConfirm.value = !showConfirm.value }) {
-                            Icon(if (showConfirm.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, contentDescription = if (showConfirm.value) "Ocultar" else "Mostrar")
+                            Icon(if (showConfirm.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, contentDescription = if (showConfirm.value) stringResource(id = com.bearkicks.app.R.string.common_hide) else stringResource(id = com.bearkicks.app.R.string.common_show))
                         }
                     }
                 )
@@ -504,9 +506,9 @@ private fun ChangePasswordDialog(
         },
         confirmButton = {
             val disabled = listOf(newError.value, confirmError.value, currentError.value).any { it != null } || current.value.isBlank() || newPass.value.isBlank() || confirm.value.isBlank() || !currentValid.value || verifying.value
-            TextButton(onClick = { if (!disabled) onSubmit(current.value, newPass.value, confirm.value) }, enabled = !disabled) { Text("Guardar") }
+            TextButton(onClick = { if (!disabled) onSubmit(current.value, newPass.value, confirm.value) }, enabled = !disabled) { Text(stringResource(id = com.bearkicks.app.R.string.common_save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(id = com.bearkicks.app.R.string.common_cancel)) } }
     )
 }
 

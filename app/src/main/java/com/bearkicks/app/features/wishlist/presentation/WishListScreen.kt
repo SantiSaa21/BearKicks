@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.bearkicks.app.features.home.domain.model.ShoeModel
 import com.bearkicks.app.features.auth.domain.usecase.ObserveAuthStateUseCase
 import com.bearkicks.app.ui.components.BKProductCard
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import androidx.compose.runtime.getValue
@@ -39,7 +41,7 @@ fun WishListScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Aún no tienes favoritos",
+                text = stringResource(id = R.string.wishlist_empty),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

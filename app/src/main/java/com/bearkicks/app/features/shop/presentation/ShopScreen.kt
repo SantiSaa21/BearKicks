@@ -19,6 +19,8 @@ import com.bearkicks.app.ui.components.BKTextField
 import com.bearkicks.app.features.auth.domain.usecase.ObserveAuthStateUseCase
 import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 
 @Composable
 fun ShopScreen(
@@ -35,8 +37,8 @@ fun ShopScreen(
             BKTextField(
                 value = uiState.query,
                 onValueChange = viewModel::onQueryChange,
-                label = "Buscar",
-                placeholder = "Nombre o marca",
+                label = stringResource(id = R.string.search_label),
+                placeholder = stringResource(id = R.string.search_placeholder),
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)
             )
             Spacer(Modifier.height(4.dp))
@@ -44,7 +46,7 @@ fun ShopScreen(
         if (uiState.filtered.isEmpty()) {
             item {
                 Text(
-                    text = if (uiState.query.isBlank()) "Sin productos" else "Sin resultados",
+                    text = if (uiState.query.isBlank()) stringResource(id = R.string.empty_products) else stringResource(id = R.string.empty_results),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(12.dp)

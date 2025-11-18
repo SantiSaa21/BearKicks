@@ -18,6 +18,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -54,9 +55,9 @@ fun CartScreen(onCheckoutSuccess: (String) -> Unit) {
                     Text(item.name, style = MaterialTheme.typography.titleSmall, maxLines = 1)
                     item.brand?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("Talla ${item.size ?: "-"}")
-                        Text("x${item.qty}")
-                        Text("Bs ${"%.2f".format(item.subtotal)}", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(id = com.bearkicks.app.R.string.cart_size_label, item.size ?: "-"))
+                        Text(stringResource(id = com.bearkicks.app.R.string.quantity_prefixed, item.qty))
+                        Text(stringResource(id = com.bearkicks.app.R.string.price_bob, String.format("%.2f", item.subtotal)), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -64,11 +65,11 @@ fun CartScreen(onCheckoutSuccess: (String) -> Unit) {
         }
         Spacer(Modifier.height(8.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Total", style = MaterialTheme.typography.titleMedium)
-            Text("Bs ${"%.2f".format(total)}", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(id = com.bearkicks.app.R.string.cart_total), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(id = com.bearkicks.app.R.string.price_bob, String.format("%.2f", total)), style = MaterialTheme.typography.titleMedium)
         }
         if (error!=null) Text(error, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-        Button(onClick = { showSheet.value = true }, enabled = items.isNotEmpty(), modifier = Modifier.fillMaxWidth()) { Text("Pagar") }
+        Button(onClick = { showSheet.value = true }, enabled = items.isNotEmpty(), modifier = Modifier.fillMaxWidth()) { Text(stringResource(id = com.bearkicks.app.R.string.checkout_pay)) }
     }
         if (showSheet.value) {
             ModalBottomSheet(onDismissRequest = { showSheet.value = false }, sheetState = sheetState) {
@@ -78,7 +79,7 @@ fun CartScreen(onCheckoutSuccess: (String) -> Unit) {
                     onPayCard = { n,e,c,h -> viewModel.onCheckoutCard(n,e,c,h) { id -> showSheet.value=false; onCheckoutSuccess(id) } },
                     onPayQr = { provider, ts -> viewModel.onCheckoutQr(provider, ts) { id -> showSheet.value=false; onCheckoutSuccess(id) } }
                 )
-                qrHash?.let { Text("QR hash: $it", style = MaterialTheme.typography.labelSmall) }
+                qrHash?.let { Text(stringResource(id = com.bearkicks.app.R.string.qr_hash_label, it), style = MaterialTheme.typography.labelSmall) }
             }
         }
     }

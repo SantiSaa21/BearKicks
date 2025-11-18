@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -54,7 +55,7 @@ fun BKProductCard(
                 ) {
                     Icon(
                         imageVector = if (shoe.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorito",
+                        contentDescription = stringResource(id = com.bearkicks.app.R.string.cd_favorite),
                         tint = if (shoe.isLiked) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                     )
                 }
@@ -91,7 +92,7 @@ fun BKProductCard(
                             shape = RoundedCornerShape(10.dp)
                         ) {
                             Text(
-                                text = "Bs ${fmt(now)}",
+                                text = stringResource(id = com.bearkicks.app.R.string.price_bob, fmt(now)),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -100,7 +101,7 @@ fun BKProductCard(
                         if (showStrike) {
                             Spacer(Modifier.width(6.dp))
                             Text(
-                                text = "Bs ${fmt(shoe.price)}",
+                                text = stringResource(id = com.bearkicks.app.R.string.price_bob, fmt(shoe.price)),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                                 textDecoration = TextDecoration.LineThrough

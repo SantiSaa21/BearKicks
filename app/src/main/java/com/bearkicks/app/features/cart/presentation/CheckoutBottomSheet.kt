@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
@@ -36,19 +37,20 @@ fun CheckoutBottomSheet(
 
     Surface(tonalElevation = 2.dp) {
         Column(Modifier.padding(20.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text("Realizar compra", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(id = com.bearkicks.app.R.string.checkout_title), style = MaterialTheme.typography.titleMedium)
             TabRow(selectedTabIndex = tab) {
-                Tab(selected = tab==0, onClick={tab=0}, text={Text("Tarjeta")})
-                Tab(selected = tab==1, onClick={tab=1}, text={Text("QR")})
+                Tab(selected = tab==0, onClick={tab=0}, text={Text(stringResource(id = com.bearkicks.app.R.string.checkout_tab_card))})
+                Tab(selected = tab==1, onClick={tab=1}, text={Text(stringResource(id = com.bearkicks.app.R.string.checkout_tab_qr))})
             }
             if (tab==0) CardForm(total = total, onPay = onPayCard) else QrForm(total = total, onPay = onPayQr)
-            TextButton(onClick = onDismiss) { Text("Cancelar") }
+            TextButton(onClick = onDismiss) { Text(stringResource(id = com.bearkicks.app.R.string.common_cancel)) }
         }
     }
 }
 
 @Composable
 private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) {
+    val context = LocalContext.current
     var numberDigits by remember { mutableStateOf("") }
     var expiry by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
@@ -80,9 +82,9 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
                 val digits = raw.filter { it.isDigit() }.take(19)
                 numberDigits = digits
                 val grouped = groupCardDigits(digits)
-                numberErr = if (digits.isNotBlank()) CardNumber.create(grouped).exceptionOrNull()?.message else "Número inválido"
+                numberErr = if (digits.isNotBlank()) CardNumber.create(grouped).exceptionOrNull()?.message else context.getString(com.bearkicks.app.R.string.invalid_number)
             },
-            label={Text("Número de tarjeta")},
+            label={Text(stringResource(id = com.bearkicks.app.R.string.field_card_number))},
             isError = numberErr!=null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             visualTransformation = CardNumberSpacingVisualTransformation()
@@ -91,9 +93,9 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
-                    value = month?.toString() ?: "Mes",
+                    value = month?.toString() ?: stringResource(id = com.bearkicks.app.R.string.field_month),
                     onValueChange = {},
-                    label = { Text("Mes") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_month)) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
                     trailingIcon = { TextButton(onClick = { monthExpanded = !monthExpanded }) { Text(if (monthExpanded) "▲" else "▼") } }
@@ -106,9 +108,9 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
             }
             Box(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
-                    value = year?.toString() ?: "Año",
+                    value = year?.toString() ?: stringResource(id = com.bearkicks.app.R.string.field_year),
                     onValueChange = {},
-                    label = { Text("Año") },
+                    label = { Text(stringResource(id = com.bearkicks.app.R.string.field_year)) },
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
                     trailingIcon = { TextButton(onClick = { yearExpanded = !yearExpanded }) { Text(if (yearExpanded) "▲" else "▼") } }
@@ -125,8 +127,8 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
         }
         OutlinedTextField(cvv, {
             cvv = it; cvvErr = Cvv.create(it).exceptionOrNull()?.message
-        }, label={Text("CVV")}, isError = cvvErr!=null, visualTransformation = if (showCvv) VisualTransformation.None else PasswordVisualTransformation(), trailingIcon={
-            TextButton(onClick={showCvv=!showCvv}) { Text(if(showCvv) "Ocultar" else "Ver") }
+        }, label={Text(stringResource(id = com.bearkicks.app.R.string.field_cvv))}, isError = cvvErr!=null, visualTransformation = if (showCvv) VisualTransformation.None else PasswordVisualTransformation(), trailingIcon={
+            TextButton(onClick={showCvv=!showCvv}) { Text(if(showCvv) stringResource(id = com.bearkicks.app.R.string.common_hide) else stringResource(id = com.bearkicks.app.R.string.common_show)) }
         })
         cvvErr?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
         OutlinedTextField(
@@ -136,16 +138,16 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
                     .replace(Regex("\\s+"), " ")
                     .trimStart()
                 holder = filtered
-                holderErr = if (filtered.isNotBlank()) CardHolderName.create(filtered).exceptionOrNull()?.message else "Nombre inválido"
+                holderErr = if (filtered.isNotBlank()) CardHolderName.create(filtered).exceptionOrNull()?.message else context.getString(com.bearkicks.app.R.string.invalid_name)
             },
-            label={Text("Titular")},
+            label={Text(stringResource(id = com.bearkicks.app.R.string.field_card_holder))},
             isError = holderErr!=null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
         holderErr?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
         val groupedNumber = groupCardDigits(numberDigits)
         val disabled = listOf(numberErr, expiryErr, cvvErr, holderErr).any { it!=null } || groupedNumber.isBlank() || expiry.isBlank() || cvv.isBlank() || holder.isBlank()
-        Button(onClick = { if(!disabled) onPay(groupedNumber, expiry, cvv, holder) }, enabled = !disabled) { Text("Pagar BOB %.2f".format(total)) }
+        Button(onClick = { if(!disabled) onPay(groupedNumber, expiry, cvv, holder) }, enabled = !disabled) { Text(stringResource(id = com.bearkicks.app.R.string.checkout_pay_bob, String.format("%.2f", total))) }
     }
 }
 
@@ -155,24 +157,24 @@ private fun QrForm(total: Double, onPay: (String, Long)->Unit) {
     var generatedAt by remember { mutableStateOf<Long?>(null) }
     var payload by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
-    Text("Genera un código QR y luego confirma el pago.")
-    OutlinedTextField(value = provider, onValueChange = {}, readOnly = true, label={Text("Proveedor QR (owner)")})
+    Text(stringResource(id = com.bearkicks.app.R.string.checkout_qr_hint))
+    OutlinedTextField(value = provider, onValueChange = {}, readOnly = true, label={Text(stringResource(id = com.bearkicks.app.R.string.checkout_qr_provider))})
     if (generatedAt == null) {
         Button(onClick = {
             generatedAt = System.currentTimeMillis()
             payload = "$provider:$total:$generatedAt"
-        }) { Text("Generar QR BOB %.2f".format(total)) }
+        }) { Text(stringResource(id = com.bearkicks.app.R.string.checkout_generate_qr_bob, String.format("%.2f", total))) }
     } else {
         payload?.let { p -> QrPreview(p) }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = { onPay(provider, generatedAt!!) }) { Text("Confirmar pago BOB %.2f".format(total)) }
+            Button(onClick = { onPay(provider, generatedAt!!) }) { Text(stringResource(id = com.bearkicks.app.R.string.checkout_confirm_payment_bob, String.format("%.2f", total))) }
             Button(onClick = {
                 payload?.let { p ->
                     val bmp = generateQrBitmap(p)
                     val saved = saveQrToGallery(context, bmp, "qr_$generatedAt.png")
-                    Toast.makeText(context, if (saved) "QR guardado" else "Error al guardar", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, if (saved) context.getString(com.bearkicks.app.R.string.checkout_qr_saved) else context.getString(com.bearkicks.app.R.string.common_error_saving), Toast.LENGTH_SHORT).show()
                 }
-            }) { Text("Guardar QR") }
+            }) { Text(stringResource(id = com.bearkicks.app.R.string.checkout_save_qr)) }
         }
     }
 }
@@ -180,7 +182,7 @@ private fun QrForm(total: Double, onPay: (String, Long)->Unit) {
 @Composable
 private fun QrPreview(payload: String) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("QR generado", style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(id = com.bearkicks.app.R.string.checkout_qr_generated), style = MaterialTheme.typography.titleSmall)
         QrImage(payload = payload, size = 160.dp)
         Text(payload, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }

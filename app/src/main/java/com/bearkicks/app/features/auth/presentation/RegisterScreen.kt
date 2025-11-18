@@ -35,6 +35,8 @@ import com.bearkicks.app.features.auth.domain.model.vo.Email
 import com.bearkicks.app.features.auth.domain.model.vo.Phone
 import com.bearkicks.app.features.auth.domain.model.vo.Address
 import com.bearkicks.app.features.auth.domain.model.vo.Password
+import androidx.compose.ui.res.stringResource
+import com.bearkicks.app.R
 
 @Composable
 fun RegisterScreen(
@@ -68,16 +70,16 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Crear cuenta", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(id = R.string.register_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(24.dp))
 
         BKTextField(
             value = firstName.value,
             onValueChange = {
                 firstName.value = it
-                firstNameError.value = if (it.isBlank()) "El nombre es obligatorio" else Name.create(it).exceptionOrNull()?.message
+                firstNameError.value = if (it.isBlank()) context.getString(R.string.required_first_name) else Name.create(it).exceptionOrNull()?.message
             },
-            label = "Nombre", size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_first_name), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         firstNameError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -85,9 +87,9 @@ fun RegisterScreen(
             value = lastName.value,
             onValueChange = {
                 lastName.value = it
-                lastNameError.value = if (it.isBlank()) "El apellido es obligatorio" else LastName.create(it).exceptionOrNull()?.message
+                lastNameError.value = if (it.isBlank()) context.getString(R.string.required_last_name) else LastName.create(it).exceptionOrNull()?.message
             },
-            label = "Apellido", size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_last_name), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         lastNameError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -95,9 +97,9 @@ fun RegisterScreen(
             value = username.value,
             onValueChange = {
                 username.value = it
-                usernameError.value = if (it.isBlank()) "El username es obligatorio" else Username.create(it).exceptionOrNull()?.message
+                usernameError.value = if (it.isBlank()) context.getString(R.string.required_username) else Username.create(it).exceptionOrNull()?.message
             },
-            label = "Username", size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_username), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         usernameError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -105,9 +107,9 @@ fun RegisterScreen(
             value = email.value,
             onValueChange = {
                 email.value = it
-                emailError.value = if (it.isBlank()) "El email es obligatorio" else Email.create(it).exceptionOrNull()?.message
+                emailError.value = if (it.isBlank()) context.getString(R.string.required_email) else Email.create(it).exceptionOrNull()?.message
             },
-            label = "Email", size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_email), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         emailError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -115,9 +117,9 @@ fun RegisterScreen(
             value = phone.value,
             onValueChange = {
                 phone.value = it
-                phoneError.value = if (it.isBlank()) "El teléfono es obligatorio" else Phone.create(it).exceptionOrNull()?.message
+                phoneError.value = if (it.isBlank()) context.getString(R.string.required_phone) else Phone.create(it).exceptionOrNull()?.message
             },
-            label = "Teléfono", size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_phone), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         phoneError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -125,9 +127,9 @@ fun RegisterScreen(
             value = address.value,
             onValueChange = {
                 address.value = it
-                addressError.value = if (it.isBlank()) "La dirección es obligatoria" else Address.create(it).exceptionOrNull()?.message
+                addressError.value = if (it.isBlank()) context.getString(R.string.required_address) else Address.create(it).exceptionOrNull()?.message
             },
-            label = "Dirección", size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_address), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         addressError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -150,7 +152,7 @@ fun RegisterScreen(
             ).apply { datePicker.maxDate = max.timeInMillis }.show()
         }, modifier = Modifier.fillMaxWidth()) {
             val sdf = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
-            Text(birthDateEpoch.value?.let { "Fecha de nacimiento: ${sdf.format(it)}" } ?: "Seleccionar fecha de nacimiento")
+            Text(birthDateEpoch.value?.let { stringResource(id = R.string.birthdate_selected, sdf.format(it)) } ?: stringResource(id = R.string.birthdate_select))
         }
         birthDateError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Spacer(Modifier.height(12.dp))
@@ -158,9 +160,9 @@ fun RegisterScreen(
             value = password.value,
             onValueChange = {
                 password.value = it
-                passwordError.value = if (it.isBlank()) "La contraseña es obligatoria" else Password.create(it).exceptionOrNull()?.message
+                passwordError.value = if (it.isBlank()) context.getString(R.string.required_password) else Password.create(it).exceptionOrNull()?.message
             },
-            label = "Contraseña", isPassword = true, size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.field_password), isPassword = true, size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
         passwordError.value?.let { Text(it, color = MaterialTheme.colorScheme.error) }
 
@@ -172,7 +174,7 @@ fun RegisterScreen(
             else -> {}
         }
         Spacer(Modifier.height(16.dp))
-        BKButton(text = "Registrar", modifier = Modifier.fillMaxWidth()) {
+        BKButton(text = stringResource(id = R.string.register_action), modifier = Modifier.fillMaxWidth()) {
             // Ejecutar validaciones finales usando VO
             firstNameError.value = Name.create(firstName.value).exceptionOrNull()?.message
             lastNameError.value = LastName.create(lastName.value).exceptionOrNull()?.message
@@ -182,7 +184,7 @@ fun RegisterScreen(
             addressError.value = Address.create(address.value).exceptionOrNull()?.message
             passwordError.value = Password.create(password.value).exceptionOrNull()?.message
             val isAdult = birthDateEpoch.value?.let { it <= System.currentTimeMillis() - 567648000000 } ?: false
-            birthDateError.value = if (!isAdult) "Fecha inválida" else null
+            birthDateError.value = if (!isAdult) context.getString(R.string.invalid_birthdate) else null
 
             val allOk = listOf(
                 firstNameError.value,
@@ -210,6 +212,6 @@ fun RegisterScreen(
             }
         }
         Spacer(Modifier.height(8.dp))
-        BKButton(text = "Volver a Iniciar sesión", modifier = Modifier.fillMaxWidth()) { onBackToLogin() }
+        BKButton(text = stringResource(id = R.string.back_to_login), modifier = Modifier.fillMaxWidth()) { onBackToLogin() }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.stringResource
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -36,7 +37,7 @@ fun QrImage(payload: String, size: Dp = 128.dp, modifier: Modifier = Modifier) {
     val bmp = remember(payload) { generateQrBitmap(payload, sizePx = size.value.toInt() * 4) }
     Image(
         bitmap = bmp.asImageBitmap(),
-        contentDescription = "QR Code",
+        contentDescription = stringResource(id = com.bearkicks.app.R.string.cd_qr_code),
         modifier = modifier.size(size),
         contentScale = ContentScale.Fit
     )

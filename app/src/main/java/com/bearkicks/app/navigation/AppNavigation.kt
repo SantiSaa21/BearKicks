@@ -38,6 +38,7 @@ import com.bearkicks.app.features.auth.domain.usecase.ObserveAuthStateUseCase
 import androidx.compose.runtime.collectAsState
 import com.google.firebase.auth.FirebaseAuth
 import com.bearkicks.app.R
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,11 +84,11 @@ fun AppNavigation() {
         topBar = {
             if (showBars) {
                 val title = when (currentRoute) {
-                    Screen.Shop.route -> Screen.Shop.title
-                    Screen.Wishlist.route -> Screen.Wishlist.title
-                    Screen.Home.route -> Screen.Home.title
-                    Screen.Cart.route -> Screen.Cart.title
-                    Screen.Profile.route -> Screen.Profile.title
+                    Screen.Shop.route -> stringResource(id = R.string.nav_shop)
+                    Screen.Wishlist.route -> stringResource(id = R.string.nav_wishlist)
+                    Screen.Home.route -> stringResource(id = R.string.nav_home)
+                    Screen.Cart.route -> stringResource(id = R.string.nav_cart)
+                    Screen.Profile.route -> stringResource(id = R.string.nav_profile)
                     else -> ""
                 }
                 BKTopBar(title = title)

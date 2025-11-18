@@ -31,10 +31,10 @@ class PeriodicPromoWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             val ds: AuthDataStore = getKoin().get()
-            val name = ds.getDisplayName() ?: "👟 Fan de BearKicks"
+            val name = ds.getDisplayName() ?: applicationContext.getString(R.string.promo_fallback_name)
             showNotification(
-                title = "Hola, $name",
-                text = "Descubre tus ofertas y favoritos de hoy"
+                title = applicationContext.getString(R.string.promo_title_name, name),
+                text = applicationContext.getString(R.string.promo_text_daily)
             )
 
             // En modo DEBUG (flag de recursos), reprograma en 5 minutos

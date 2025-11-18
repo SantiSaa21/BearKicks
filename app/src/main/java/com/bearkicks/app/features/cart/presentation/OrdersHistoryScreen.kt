@@ -19,6 +19,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,7 +61,7 @@ fun OrdersHistoryScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tus pedidos") },
+                title = { Text(stringResource(id = com.bearkicks.app.R.string.orders_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = null) }
                 }
@@ -70,7 +71,7 @@ fun OrdersHistoryScreen(onBack: () -> Unit) {
         Column(Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
             if (orders.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No tienes pedidos todavía", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(id = com.bearkicks.app.R.string.orders_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else {
                 val fmt = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()) }
@@ -84,22 +85,22 @@ fun OrdersHistoryScreen(onBack: () -> Unit) {
                             Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Column(Modifier.weight(1f)) {
-                                        Text("Pedido ${order.orderId.takeLast(6).uppercase()}", style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        Text(stringResource(id = com.bearkicks.app.R.string.order_id_prefix, order.orderId.takeLast(6).uppercase()), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                         Text(fmt.format(Date(order.createdAt)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
-                                    Text("Bs ${"%.2f".format(order.total)}", style = MaterialTheme.typography.titleMedium)
+                                    Text(stringResource(id = com.bearkicks.app.R.string.price_bob, "%.2f".format(order.total)), style = MaterialTheme.typography.titleMedium)
                                 }
                                 payment?.let {
                                     val label = when (it.method) {
-                                        "CARD" -> "Tarjeta •••• ${it.last4 ?: "----"}"
-                                        "QR" -> "QR (${it.payloadHash?.take(8)}…)"
+                                        "CARD" -> stringResource(id = com.bearkicks.app.R.string.payment_card_mask, it.last4 ?: "----")
+                                        "QR" -> stringResource(id = com.bearkicks.app.R.string.payment_qr_hash, it.payloadHash?.take(8) ?: "")
                                         else -> it.method
                                     }
                                     Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                                 }
                                 OrderItemsStrip(orderId = order.orderId)
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                                    TextButton(onClick = { scope.launch { deleteOrder(order.orderId) } }) { Text("Eliminar") }
+                                    TextButton(onClick = { scope.launch { deleteOrder(order.orderId) } }) { Text(stringResource(id = com.bearkicks.app.R.string.common_delete)) }
                                 }
                             }
                         }
@@ -126,17 +127,17 @@ private fun OrderItemsStrip(orderId: String) {
                 )
             }
         }
-        Text("${items.sumOf { it.qty }} artículos", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(stringResource(id = com.bearkicks.app.R.string.items_count, items.sumOf { it.qty }), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Divider()
         items.take(2).forEach { it ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(it.name, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text("x${it.qty}")
-                Text("Bs ${"%.2f".format(it.price * it.qty)}")
+                Text(stringResource(id = com.bearkicks.app.R.string.quantity_prefixed, it.qty))
+                Text(stringResource(id = com.bearkicks.app.R.string.price_bob, "%.2f".format(it.price * it.qty)))
             }
         }
         if (items.size > 2) {
-            Text("… y ${items.size - 2} más", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(id = com.bearkicks.app.R.string.and_more, items.size - 2), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
         }
     }
 }
