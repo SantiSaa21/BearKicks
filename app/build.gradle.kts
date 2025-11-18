@@ -35,6 +35,8 @@ android {
     }
     kotlinOptions { jvmTarget = "11" }
     buildFeatures { compose = true }
+    // Ensure BuildConfig is generated
+    buildFeatures { buildConfig = true }
 
     testOptions {
         unitTests.isReturnDefaultValues = true // Evita NPE en clases Android no mockeadas
@@ -83,6 +85,7 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")

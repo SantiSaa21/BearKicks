@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.authDataStore by preferencesDataStore(name = "auth_preferences")
@@ -19,6 +20,8 @@ class AuthDataStore(private val context: Context) {
     }
 
     fun observeUserId(): Flow<String?> = context.authDataStore.data.map { it[USER_ID] }
+
+    suspend fun getDisplayName(): String? = context.authDataStore.data.map { it[DISPLAY_NAME] }.first()
 
     suspend fun saveSession(userId: String, email: String, name: String?, photoUrl: String?) {
         context.authDataStore.edit { prefs ->

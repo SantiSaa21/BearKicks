@@ -71,7 +71,8 @@ val appModule = module {
     single<DatabaseReference>(named("usersRef")) { get<DatabaseReference>(named("dbRoot")).child("users") }
     single<DatabaseReference>(named("usernamesRef")) { get<DatabaseReference>(named("dbRoot")).child("usernames") }
     single { FirebaseAuth.getInstance() }
-    single { FirebaseStorage.getInstance() }
+    // Be explicit about the default bucket to avoid config drift
+    single { FirebaseStorage.getInstance("gs://bearkicks-210304.appspot.com") }
 
     single { AuthDataStore(get()) }
     single { AuthFirebaseDataSource(get(), get(named("dbRoot")), get(named("usersRef")), get(named("usernamesRef"))) }
