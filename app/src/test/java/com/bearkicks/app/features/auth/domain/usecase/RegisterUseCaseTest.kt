@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.*
 import org.junit.Test
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 private class FakeAuthRepository : IAuthRepository {
     private val state = MutableStateFlow<UserModel?>(null)
@@ -71,7 +73,8 @@ class RegisterUseCaseTest {
             photoPath = null
         )
         assertTrue(result.isFailure)
-        assertEquals("El nombre debe tener solo letras (2-50) sin espacios", result.exceptionOrNull()?.message)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.INVALID_FIRST_NAME_RULES, ex.key)
     }
 
     @Test fun register_invalid_birthDate() = runBlocking {
@@ -89,6 +92,7 @@ class RegisterUseCaseTest {
             photoPath = null
         )
         assertTrue(result.isFailure)
-        assertEquals("Debes ser mayor de 18 años", result.exceptionOrNull()?.message)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.MUST_BE_ADULT, ex.key)
     }
 }

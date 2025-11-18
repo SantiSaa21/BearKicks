@@ -1,5 +1,8 @@
 package com.bearkicks.app.features.cart.domain.model.payment.vo
 
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
+
 @JvmInline
 value class CardNumber private constructor(val sanitized: String) {
     val last4: String get() = sanitized.takeLast(4)
@@ -12,8 +15,8 @@ value class CardNumber private constructor(val sanitized: String) {
     companion object {
         fun create(input: String): Result<CardNumber> {
             val digits = input.filter { it.isDigit() }
-            if (digits.length !in 13..19) return Result.failure(IllegalArgumentException("Número inválido"))
-            if (!luhn(digits)) return Result.failure(IllegalArgumentException("Número de tarjeta inválido"))
+            if (digits.length !in 13..19) return Result.failure(DomainException(ErrorKey.CARD_NUMBER_INVALID_LENGTH))
+            if (!luhn(digits)) return Result.failure(DomainException(ErrorKey.CARD_NUMBER_LUHN_INVALID))
             return Result.success(CardNumber(digits))
         }
         private fun luhn(number: String): Boolean {

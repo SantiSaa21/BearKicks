@@ -24,6 +24,8 @@ import com.bearkicks.app.features.cart.domain.model.payment.vo.CardNumber
 import com.bearkicks.app.features.cart.domain.model.payment.vo.ExpiryDate
 import com.bearkicks.app.features.cart.domain.model.payment.vo.Cvv
 import com.bearkicks.app.features.cart.domain.model.payment.vo.CardHolderName
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.ui.strings.errorTextRes
 
 @Composable
 fun CheckoutBottomSheet(
@@ -71,7 +73,9 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
             val mm = month!!.toString().padStart(2,'0')
             val yy = year!!.toString().takeLast(2)
             expiry = "$mm/$yy"
-            expiryErr = ExpiryDate.create(expiry).exceptionOrNull()?.message
+            expiryErr = ExpiryDate.create(expiry).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
         }
     }
 
@@ -82,7 +86,11 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
                 val digits = raw.filter { it.isDigit() }.take(19)
                 numberDigits = digits
                 val grouped = groupCardDigits(digits)
-                numberErr = if (digits.isNotBlank()) CardNumber.create(grouped).exceptionOrNull()?.message else context.getString(com.bearkicks.app.R.string.invalid_number)
+                numberErr = if (digits.isNotBlank()) {
+                    CardNumber.create(grouped).exceptionOrNull()?.let { e ->
+                        (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                    }
+                } else context.getString(com.bearkicks.app.R.string.invalid_number)
             },
             label={Text(stringResource(id = com.bearkicks.app.R.string.field_card_number))},
             isError = numberErr!=null,
@@ -126,7 +134,9 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
             expiryErr?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
         }
         OutlinedTextField(cvv, {
-            cvv = it; cvvErr = Cvv.create(it).exceptionOrNull()?.message
+            cvv = it; cvvErr = Cvv.create(it).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
         }, label={Text(stringResource(id = com.bearkicks.app.R.string.field_cvv))}, isError = cvvErr!=null, visualTransformation = if (showCvv) VisualTransformation.None else PasswordVisualTransformation(), trailingIcon={
             TextButton(onClick={showCvv=!showCvv}) { Text(if(showCvv) stringResource(id = com.bearkicks.app.R.string.common_hide) else stringResource(id = com.bearkicks.app.R.string.common_show)) }
         })
@@ -138,7 +148,11 @@ private fun CardForm(total: Double, onPay: (String,String,String,String)->Unit) 
                     .replace(Regex("\\s+"), " ")
                     .trimStart()
                 holder = filtered
-                holderErr = if (filtered.isNotBlank()) CardHolderName.create(filtered).exceptionOrNull()?.message else context.getString(com.bearkicks.app.R.string.invalid_name)
+                holderErr = if (filtered.isNotBlank()) {
+                    CardHolderName.create(filtered).exceptionOrNull()?.let { e ->
+                        (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                    }
+                } else context.getString(com.bearkicks.app.R.string.invalid_name)
             },
             label={Text(stringResource(id = com.bearkicks.app.R.string.field_card_holder))},
             isError = holderErr!=null,

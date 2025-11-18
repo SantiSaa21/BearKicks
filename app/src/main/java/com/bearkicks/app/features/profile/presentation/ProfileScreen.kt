@@ -128,7 +128,7 @@ fun ProfileScreen(onLoggedOut: () -> Unit, onSeeAllOrders: () -> Unit) {
             Text(stringResource(id = com.bearkicks.app.R.string.profile_logged_out), style = MaterialTheme.typography.titleMedium)
         }
         is ProfileUiState.Error -> Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
-            Text(state.message, color = MaterialTheme.colorScheme.error)
+            Text(stringResource(id = com.bearkicks.app.ui.strings.errorTextRes(state.key)), color = MaterialTheme.colorScheme.error)
         }
         ProfileUiState.Loading -> Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center) {
             Text(stringResource(id = com.bearkicks.app.R.string.common_loading))
@@ -147,7 +147,7 @@ private fun ProfileContent(
     onUpdatePhotoUrl: (String) -> Unit,
     onPickPhoto: (Uri) -> Unit,
     onChangePassword: (String, String, String, (Result<Unit>) -> Unit) -> Unit,
-    onVerifyCurrentPassword: (String, (Boolean, String?) -> Unit) -> Unit
+    onVerifyCurrentPassword: (String, (Boolean, com.bearkicks.app.core.errors.ErrorKey?) -> Unit) -> Unit
 ) {
     var editOpen = rememberSaveable { mutableStateOf(false) }
     var passwordOpen = rememberSaveable { mutableStateOf(false) }
@@ -259,6 +259,7 @@ private fun EditProfileDialog(
     onDismiss: () -> Unit,
     onSave: (String, String, String, String) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val firstName = rememberSaveable { mutableStateOf(firstNameInit) }
     val lastName = rememberSaveable { mutableStateOf(lastNameInit) }
     val phone = rememberSaveable { mutableStateOf(phoneInit) }
@@ -277,7 +278,7 @@ private fun EditProfileDialog(
                     value = firstName.value,
                     onValueChange = {
                         firstName.value = it
-                        firstNameError.value = validateName(it)
+                        firstNameError.value = validateName(it)?.let { key -> context.getString(com.bearkicks.app.ui.strings.errorTextRes(key)) }
                     },
                     isError = firstNameError.value != null,
                     label = { Text(stringResource(id = com.bearkicks.app.R.string.field_first_name)) },
@@ -289,7 +290,7 @@ private fun EditProfileDialog(
                     value = lastName.value,
                     onValueChange = {
                         lastName.value = it
-                        lastNameError.value = validateLastName(it)
+                        lastNameError.value = validateLastName(it)?.let { key -> context.getString(com.bearkicks.app.ui.strings.errorTextRes(key)) }
                     },
                     isError = lastNameError.value != null,
                     label = { Text(stringResource(id = com.bearkicks.app.R.string.field_last_name)) },
@@ -301,7 +302,7 @@ private fun EditProfileDialog(
                     value = phone.value,
                     onValueChange = {
                         phone.value = it
-                        phoneError.value = validatePhone(it)
+                        phoneError.value = validatePhone(it)?.let { key -> context.getString(com.bearkicks.app.ui.strings.errorTextRes(key)) }
                     },
                     isError = phoneError.value != null,
                     label = { Text(stringResource(id = com.bearkicks.app.R.string.field_phone)) },
@@ -313,7 +314,7 @@ private fun EditProfileDialog(
                     value = address.value,
                     onValueChange = {
                         address.value = it
-                        addressError.value = validateAddress(it)
+                        addressError.value = validateAddress(it)?.let { key -> context.getString(com.bearkicks.app.ui.strings.errorTextRes(key)) }
                     },
                     isError = addressError.value != null,
                     label = { Text(stringResource(id = com.bearkicks.app.R.string.field_address)) },
@@ -390,18 +391,23 @@ private fun rememberDateFormatter(): (Long) -> String {
     return { millis -> sdf.format(Date(millis)) }
 }
 
-private fun validateName(v: String): String? = Name.create(v).exceptionOrNull()?.message
-private fun validateLastName(v: String): String? = LastName.create(v).exceptionOrNull()?.message
-private fun validatePhone(v: String): String? = Phone.create(v).exceptionOrNull()?.message
-private fun validateAddress(v: String): String? = Address.create(v).exceptionOrNull()?.message
-private fun validatePassword(v: String): String? = Password.create(v).exceptionOrNull()?.message
+private fun validateName(v: String): com.bearkicks.app.core.errors.ErrorKey? =
+    (Name.create(v).exceptionOrNull() as? com.bearkicks.app.core.errors.DomainException)?.key
+private fun validateLastName(v: String): com.bearkicks.app.core.errors.ErrorKey? =
+    (LastName.create(v).exceptionOrNull() as? com.bearkicks.app.core.errors.DomainException)?.key
+private fun validatePhone(v: String): com.bearkicks.app.core.errors.ErrorKey? =
+    (Phone.create(v).exceptionOrNull() as? com.bearkicks.app.core.errors.DomainException)?.key
+private fun validateAddress(v: String): com.bearkicks.app.core.errors.ErrorKey? =
+    (Address.create(v).exceptionOrNull() as? com.bearkicks.app.core.errors.DomainException)?.key
+private fun validatePassword(v: String): com.bearkicks.app.core.errors.ErrorKey? =
+    (Password.create(v).exceptionOrNull() as? com.bearkicks.app.core.errors.DomainException)?.key
 
 @Composable
 private fun ChangePasswordDialog(
     onDismiss: () -> Unit,
     result: Result<Unit>?,
     onSubmit: (String, String, String) -> Unit,
-    onVerifyCurrent: (String, (Boolean, String?) -> Unit) -> Unit
+    onVerifyCurrent: (String, (Boolean, com.bearkicks.app.core.errors.ErrorKey?) -> Unit) -> Unit
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val current = rememberSaveable { mutableStateOf("") }
@@ -409,7 +415,7 @@ private fun ChangePasswordDialog(
     val confirm = rememberSaveable { mutableStateOf("") }
     val newError = rememberSaveable { mutableStateOf<String?>(null) }
     val confirmError = rememberSaveable { mutableStateOf<String?>(null) }
-    val currentError = rememberSaveable { mutableStateOf<String?>(null) }
+    val currentError = rememberSaveable { mutableStateOf<com.bearkicks.app.core.errors.ErrorKey?>(null) }
     val currentValid = rememberSaveable { mutableStateOf(false) }
     val verifying = rememberSaveable { mutableStateOf(false) }
     val showCurrent = rememberSaveable { mutableStateOf(false) }
@@ -419,7 +425,11 @@ private fun ChangePasswordDialog(
     var verifyJob by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     val statusMessage = result?.fold(
         onSuccess = { stringResource(id = com.bearkicks.app.R.string.password_updated) },
-        onFailure = { it.message ?: stringResource(id = com.bearkicks.app.R.string.error_generic) }
+        onFailure = {
+            val key = (it as? com.bearkicks.app.core.errors.DomainException)?.key
+                ?: com.bearkicks.app.core.errors.ErrorKey.GENERIC_ERROR
+            stringResource(id = com.bearkicks.app.ui.strings.errorTextRes(key))
+        }
     )
 
     AlertDialog(
@@ -461,13 +471,13 @@ private fun ChangePasswordDialog(
                 when {
                     verifying.value -> Text(stringResource(id = com.bearkicks.app.R.string.password_verifying), style = MaterialTheme.typography.bodySmall)
                     currentValid.value && currentError.value == null -> Text(stringResource(id = com.bearkicks.app.R.string.password_current_ok), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
-                    currentError.value != null -> Text(currentError.value!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    currentError.value != null -> Text(stringResource(id = com.bearkicks.app.ui.strings.errorTextRes(currentError.value!!)), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
                 }
                 OutlinedTextField(
                     value = newPass.value,
                     onValueChange = {
                         newPass.value = it
-                        newError.value = validatePassword(it)
+                        newError.value = validatePassword(it)?.let { key -> context.getString(com.bearkicks.app.ui.strings.errorTextRes(key)) }
                         if (currentValid.value && it == current.value) {
                             newError.value = context.getString(com.bearkicks.app.R.string.password_new_same_as_current)
                         }

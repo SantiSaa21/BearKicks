@@ -14,7 +14,7 @@ sealed class RegisterUiState {
     data object Idle : RegisterUiState()
     data object Loading : RegisterUiState()
     data class Success(val user: UserModel) : RegisterUiState()
-    data class Error(val message: String) : RegisterUiState()
+    data class Error(val key: com.bearkicks.app.core.errors.ErrorKey) : RegisterUiState()
 }
 
 class RegisterViewModel(private val register: RegisterUseCase) : ViewModel() {
@@ -37,7 +37,11 @@ class RegisterViewModel(private val register: RegisterUseCase) : ViewModel() {
             val res = register(firstName, lastName, username, email, phone, address, birthDate, password, photoPath)
             _state.value = res.fold(
                 onSuccess = { RegisterUiState.Success(it) },
-                onFailure = { RegisterUiState.Error(it.message ?: "Error al registrar") }
+                onFailure = {
+                    val key = (it as? com.bearkicks.app.core.errors.DomainException)?.key
+                        ?: com.bearkicks.app.core.errors.ErrorKey.GENERIC_ERROR
+                    RegisterUiState.Error(key)
+                }
             )
         }
     }

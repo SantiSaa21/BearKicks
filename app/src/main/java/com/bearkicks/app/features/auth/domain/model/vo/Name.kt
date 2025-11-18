@@ -1,5 +1,8 @@
 package com.bearkicks.app.features.auth.domain.model.vo
 
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
+
 @JvmInline
 value class Name private constructor(val value: String) {
     companion object {
@@ -8,7 +11,7 @@ value class Name private constructor(val value: String) {
         fun create(input: String): Result<Name> {
             val v = input.trim()
             return if (REGEX.matches(v)) Result.success(Name(v))
-            else Result.failure(IllegalArgumentException("El nombre debe tener solo letras (2-50) sin espacios"))
+            else Result.failure(DomainException(ErrorKey.INVALID_FIRST_NAME_RULES))
         }
     }
 }
@@ -21,7 +24,7 @@ value class LastName private constructor(val value: String) {
         fun create(input: String): Result<LastName> {
             val v = input.trim()
             return if (v.length <= 60 && REGEX.matches(v)) Result.success(LastName(v))
-            else Result.failure(IllegalArgumentException("Apellido inválido (palabras de ≥2 letras, total máximo 60)"))
+            else Result.failure(DomainException(ErrorKey.INVALID_LAST_NAME_RULES))
         }
     }
 }

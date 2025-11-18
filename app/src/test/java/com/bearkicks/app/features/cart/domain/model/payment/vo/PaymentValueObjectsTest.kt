@@ -2,6 +2,8 @@ package com.bearkicks.app.features.cart.domain.model.payment.vo
 
 import org.junit.Assert.*
 import org.junit.Test
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 class PaymentValueObjectsTest {
 
@@ -15,6 +17,16 @@ class PaymentValueObjectsTest {
     fun `invalid card number fails`() {
         val result = CardNumber.create("1234 0000")
         assertTrue(result.isFailure)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.CARD_NUMBER_INVALID_LENGTH, ex.key)
+    }
+
+    @Test
+    fun `invalid luhn card number returns correct key`() {
+        val result = CardNumber.create("4111 1111 1111 1112")
+        assertTrue(result.isFailure)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.CARD_NUMBER_LUHN_INVALID, ex.key)
     }
 
     @Test
@@ -31,6 +43,16 @@ class PaymentValueObjectsTest {
         val value = "01/%02d".format(yr)
         val result = ExpiryDate.create(value)
         assertTrue(result.isFailure)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.EXPIRY_EXPIRED, ex.key)
+    }
+
+    @Test
+    fun `invalid expiry format returns correct key`() {
+        val result = ExpiryDate.create("13/25")
+        assertTrue(result.isFailure)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.EXPIRY_FORMAT_INVALID, ex.key)
     }
 
     @Test
@@ -40,7 +62,10 @@ class PaymentValueObjectsTest {
 
     @Test
     fun `invalid cvv fails`() {
-        assertTrue(Cvv.create("1").isFailure)
+        val result = Cvv.create("1")
+        assertTrue(result.isFailure)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.CVV_INVALID, ex.key)
     }
 
     @Test
@@ -50,6 +75,19 @@ class PaymentValueObjectsTest {
 
     @Test
     fun `invalid card holder name fails`() {
-        assertTrue(CardHolderName.create("J").isFailure)
+        val result = CardHolderName.create("J")
+        assertTrue(result.isFailure)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.CARDHOLDER_INVALID, ex.key)
+    }
+
+    @Test
+    fun `brand detection for common cards`() {
+        val visa = CardNumber.create("4111 1111 1111 1111").getOrThrow()
+        val mc = CardNumber.create("5105 1051 0510 5100").getOrThrow()
+        val amex = CardNumber.create("378282246310005").getOrThrow()
+        assertEquals("VISA", visa.brand)
+        assertEquals("MASTERCARD", mc.brand)
+        assertEquals("AMEX", amex.brand)
     }
 }

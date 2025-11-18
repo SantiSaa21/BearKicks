@@ -37,6 +37,8 @@ import com.bearkicks.app.features.auth.domain.model.vo.Address
 import com.bearkicks.app.features.auth.domain.model.vo.Password
 import androidx.compose.ui.res.stringResource
 import com.bearkicks.app.R
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.ui.strings.errorTextRes
 
 @Composable
 fun RegisterScreen(
@@ -77,7 +79,9 @@ fun RegisterScreen(
             value = firstName.value,
             onValueChange = {
                 firstName.value = it
-                firstNameError.value = if (it.isBlank()) context.getString(R.string.required_first_name) else Name.create(it).exceptionOrNull()?.message
+                firstNameError.value = if (it.isBlank()) context.getString(R.string.required_first_name) else Name.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_first_name), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -87,7 +91,9 @@ fun RegisterScreen(
             value = lastName.value,
             onValueChange = {
                 lastName.value = it
-                lastNameError.value = if (it.isBlank()) context.getString(R.string.required_last_name) else LastName.create(it).exceptionOrNull()?.message
+                lastNameError.value = if (it.isBlank()) context.getString(R.string.required_last_name) else LastName.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_last_name), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -97,7 +103,9 @@ fun RegisterScreen(
             value = username.value,
             onValueChange = {
                 username.value = it
-                usernameError.value = if (it.isBlank()) context.getString(R.string.required_username) else Username.create(it).exceptionOrNull()?.message
+                usernameError.value = if (it.isBlank()) context.getString(R.string.required_username) else Username.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_username), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -107,7 +115,9 @@ fun RegisterScreen(
             value = email.value,
             onValueChange = {
                 email.value = it
-                emailError.value = if (it.isBlank()) context.getString(R.string.required_email) else Email.create(it).exceptionOrNull()?.message
+                emailError.value = if (it.isBlank()) context.getString(R.string.required_email) else Email.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_email), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -117,7 +127,9 @@ fun RegisterScreen(
             value = phone.value,
             onValueChange = {
                 phone.value = it
-                phoneError.value = if (it.isBlank()) context.getString(R.string.required_phone) else Phone.create(it).exceptionOrNull()?.message
+                phoneError.value = if (it.isBlank()) context.getString(R.string.required_phone) else Phone.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_phone), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -127,7 +139,9 @@ fun RegisterScreen(
             value = address.value,
             onValueChange = {
                 address.value = it
-                addressError.value = if (it.isBlank()) context.getString(R.string.required_address) else Address.create(it).exceptionOrNull()?.message
+                addressError.value = if (it.isBlank()) context.getString(R.string.required_address) else Address.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_address), size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -160,7 +174,9 @@ fun RegisterScreen(
             value = password.value,
             onValueChange = {
                 password.value = it
-                passwordError.value = if (it.isBlank()) context.getString(R.string.required_password) else Password.create(it).exceptionOrNull()?.message
+                passwordError.value = if (it.isBlank()) context.getString(R.string.required_password) else Password.create(it).exceptionOrNull()?.let { e ->
+                    (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+                }
             },
             label = stringResource(id = R.string.field_password), isPassword = true, size = BKTextFieldSize.Medium, modifier = Modifier.fillMaxWidth()
         )
@@ -169,20 +185,37 @@ fun RegisterScreen(
         Spacer(Modifier.height(16.dp))
         when (uiState) {
             is RegisterUiState.Loading -> CircularProgressIndicator()
-            is RegisterUiState.Error -> Text((uiState as RegisterUiState.Error).message, color = MaterialTheme.colorScheme.error)
+            is RegisterUiState.Error -> Text(
+                text = stringResource(id = errorTextRes((uiState as RegisterUiState.Error).key)),
+                color = MaterialTheme.colorScheme.error
+            )
             is RegisterUiState.Success -> onRegistered()
             else -> {}
         }
         Spacer(Modifier.height(16.dp))
         BKButton(text = stringResource(id = R.string.register_action), modifier = Modifier.fillMaxWidth()) {
-            // Ejecutar validaciones finales usando VO
-            firstNameError.value = Name.create(firstName.value).exceptionOrNull()?.message
-            lastNameError.value = LastName.create(lastName.value).exceptionOrNull()?.message
-            usernameError.value = Username.create(username.value).exceptionOrNull()?.message
-            emailError.value = Email.create(email.value).exceptionOrNull()?.message
-            phoneError.value = Phone.create(phone.value).exceptionOrNull()?.message
-            addressError.value = Address.create(address.value).exceptionOrNull()?.message
-            passwordError.value = Password.create(password.value).exceptionOrNull()?.message
+            // Ejecutar validaciones finales usando VO mapeando a recursos
+            firstNameError.value = Name.create(firstName.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
+            lastNameError.value = LastName.create(lastName.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
+            usernameError.value = Username.create(username.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
+            emailError.value = Email.create(email.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
+            phoneError.value = Phone.create(phone.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
+            addressError.value = Address.create(address.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
+            passwordError.value = Password.create(password.value).exceptionOrNull()?.let { e ->
+                (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
+            }
             val isAdult = birthDateEpoch.value?.let { it <= System.currentTimeMillis() - 567648000000 } ?: false
             birthDateError.value = if (!isAdult) context.getString(R.string.invalid_birthdate) else null
 

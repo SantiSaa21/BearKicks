@@ -3,6 +3,8 @@ package com.bearkicks.app.features.auth.domain.model.vo
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.concurrent.TimeUnit
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 class ValueObjectsTest {
 
@@ -12,7 +14,8 @@ class ValueObjectsTest {
     @Test fun name_invalid_short() {
         val r = Name.create("C")
         assertTrue(r.isFailure)
-        assertEquals("El nombre debe tener solo letras (2-50) sin espacios", r.exceptionOrNull()?.message)
+        val ex = r.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.INVALID_FIRST_NAME_RULES, ex.key)
     }
     @Test fun name_invalid_space() { assertTrue(Name.create("Juan Perez").isFailure) }
 
@@ -44,7 +47,8 @@ class ValueObjectsTest {
         val fifteenYearsMillis = 15L * 365L * 24L * 60L * 60L * 1000L
         val r = BirthDate.create(now - fifteenYearsMillis, now)
         assertTrue(r.isFailure)
-        assertEquals("Debes ser mayor de 18 años", r.exceptionOrNull()?.message)
+        val ex = r.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.MUST_BE_ADULT, ex.key)
     }
 
     @Test fun password_valid() { assertTrue(Password.create("Abcdef12").isSuccess) }

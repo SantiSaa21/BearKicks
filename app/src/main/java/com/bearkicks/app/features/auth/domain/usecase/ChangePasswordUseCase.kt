@@ -4,15 +4,15 @@ import com.bearkicks.app.features.auth.domain.model.vo.Password
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 class ChangePasswordUseCase(private val auth: FirebaseAuth) {
     suspend operator fun invoke(currentPassword: String, newPassword: String, confirmPassword: String): Result<Unit> {
-        val user = auth.currentUser ?: return Result.failure(IllegalStateException("No autenticado"))
-        val email = user.email ?: return Result.failure(IllegalStateException("Usuario sin email"))
+        val user = auth.currentUser ?: return Result.failure(DomainException(ErrorKey.NOT_AUTHENTICATED))
+        val email = user.email ?: return Result.failure(DomainException(ErrorKey.USER_MISSING_EMAIL))
 
-        if (newPassword != confirmPassword) {
-            return Result.failure(IllegalArgumentException("Las contraseñas no coinciden"))
-        }
+        if (newPassword != confirmPassword) return Result.failure(DomainException(ErrorKey.PASSWORDS_DO_NOT_MATCH))
 
         val vo = Password.create(newPassword)
         if (vo.isFailure) return Result.failure(vo.exceptionOrNull()!!)
@@ -23,12 +23,12 @@ class ChangePasswordUseCase(private val auth: FirebaseAuth) {
             user.updatePassword(vo.getOrThrow().value).await()
             Result.success(Unit)
         } catch (e: Exception) {
-            val msg = when {
-                e.message?.contains("INVALID_LOGIN_CREDENTIALS", true) == true -> "Contraseña actual incorrecta"
-                e.message?.contains("TOO_MANY_ATTEMPTS", true) == true -> "Demasiados intentos, espera unos minutos"
-                else -> e.message ?: "Error al cambiar contraseña"
+            val key = when {
+                e.message?.contains("INVALID_LOGIN_CREDENTIALS", true) == true -> ErrorKey.WRONG_CURRENT_PASSWORD
+                e.message?.contains("TOO_MANY_ATTEMPTS", true) == true -> ErrorKey.TOO_MANY_ATTEMPTS
+                else -> ErrorKey.CHANGE_PASSWORD_ERROR
             }
-            Result.failure(IllegalStateException(msg, e))
+            Result.failure(DomainException(key, e))
         }
     }
 }

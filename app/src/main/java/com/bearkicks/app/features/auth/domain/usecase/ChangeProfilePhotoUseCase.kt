@@ -9,6 +9,8 @@ import com.bearkicks.app.features.auth.domain.model.UserModel
 import com.bearkicks.app.features.auth.domain.repository.IAuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import java.io.ByteArrayOutputStream
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 /**
  * Subida de foto de perfil sin Firebase Storage.
@@ -23,18 +25,18 @@ class ChangeProfilePhotoUseCase(
     private val context: Context
 ) {
     suspend operator fun invoke(uri: Uri): Result<UserModel> {
-        val user = auth.currentUser ?: return Result.failure(IllegalStateException("No autenticado"))
+        val user = auth.currentUser ?: return Result.failure(DomainException(ErrorKey.NOT_AUTHENTICATED))
         return runCatching {
             val bytes = context.contentResolver.openInputStream(uri)?.use { input ->
                 // Decodificar con sampleo para evitar OOM en fotos grandes
                 val opts = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
                 val original = BitmapFactory.decodeStream(input, null, opts)
-                    ?: error("No se pudo leer la imagen")
+                    ?: throw DomainException(ErrorKey.IMAGE_READ_ERROR)
                 val scaled = scaleDown(original, 512)
                 val out = ByteArrayOutputStream()
                 scaled.compress(Bitmap.CompressFormat.JPEG, 82, out)
                 out.toByteArray()
-            } ?: error("No se pudo abrir la imagen")
+            } ?: throw DomainException(ErrorKey.IMAGE_OPEN_ERROR)
 
             val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
             val dataUri = "data:image/jpeg;base64,$base64"

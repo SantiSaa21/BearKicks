@@ -32,7 +32,7 @@ open class PlaceOrderUseCase(private val repo: ICartRepository, private val uidP
 
 class CheckoutWithCardUseCase(private val repo: ICartRepository, private val uidProvider: () -> String) {
     suspend operator fun invoke(items: List<CartItem>, number: String, expiry: String, cvv: String, holder: String): Result<String> {
-        if (items.isEmpty()) return Result.failure(IllegalArgumentException("Carrito vacío"))
+        if (items.isEmpty()) return Result.failure(com.bearkicks.app.core.errors.DomainException(com.bearkicks.app.core.errors.ErrorKey.CART_EMPTY))
         val cardNumber = CardNumber.create(number).getOrElse { return Result.failure(it) }
         val exp = ExpiryDate.create(expiry).getOrElse { return Result.failure(it) }
         val c = Cvv.create(cvv).getOrElse { return Result.failure(it) }
@@ -52,7 +52,7 @@ class CheckoutWithQrUseCase(private val repo: ICartRepository, private val uidPr
      * Devuelve Pair(orderId, payloadHash).
      */
         suspend operator fun invoke(items: List<CartItem>, provider: String, timestamp: Long): Result<Pair<String, String>> {
-            if (items.isEmpty()) return Result.failure(IllegalArgumentException("Carrito vacío"))
+            if (items.isEmpty()) return Result.failure(com.bearkicks.app.core.errors.DomainException(com.bearkicks.app.core.errors.ErrorKey.CART_EMPTY))
             val total = items.sumOf { it.subtotal }
             val payload = "${'$'}provider:${'$'}total:${'$'}timestamp"
             val hash = sha256(payload)

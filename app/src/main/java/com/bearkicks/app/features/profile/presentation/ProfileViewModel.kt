@@ -24,7 +24,7 @@ sealed class ProfileUiState {
     data object Loading : ProfileUiState()
     data class Authenticated(val user: UserModel) : ProfileUiState()
     data object LoggedOut : ProfileUiState()
-    data class Error(val message: String) : ProfileUiState()
+    data class Error(val key: com.bearkicks.app.core.errors.ErrorKey) : ProfileUiState()
 }
 
 class ProfileViewModel(
@@ -77,7 +77,11 @@ class ProfileViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val result = updateProfile(firstName, lastName, phone, address)
             result.onSuccess { _state.value = ProfileUiState.Authenticated(it) }
-                .onFailure { _state.value = ProfileUiState.Error(it.message ?: "Error al actualizar perfil") }
+                .onFailure {
+                    val key = (it as? com.bearkicks.app.core.errors.DomainException)?.key
+                        ?: com.bearkicks.app.core.errors.ErrorKey.GENERIC_ERROR
+                    _state.value = ProfileUiState.Error(key)
+                }
         }
     }
 
@@ -85,7 +89,11 @@ class ProfileViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val result = updatePhoto(photoPath)
             result.onSuccess { _state.value = ProfileUiState.Authenticated(it) }
-                .onFailure { _state.value = ProfileUiState.Error(it.message ?: "Error al actualizar foto") }
+                .onFailure {
+                    val key = (it as? com.bearkicks.app.core.errors.DomainException)?.key
+                        ?: com.bearkicks.app.core.errors.ErrorKey.GENERIC_ERROR
+                    _state.value = ProfileUiState.Error(key)
+                }
         }
     }
 
@@ -93,7 +101,11 @@ class ProfileViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val result = changePhoto(uri)
             result.onSuccess { _state.value = ProfileUiState.Authenticated(it) }
-                .onFailure { _state.value = ProfileUiState.Error(it.message ?: "Error al subir foto") }
+                .onFailure {
+                    val key = (it as? com.bearkicks.app.core.errors.DomainException)?.key
+                        ?: com.bearkicks.app.core.errors.ErrorKey.GENERIC_ERROR
+                    _state.value = ProfileUiState.Error(key)
+                }
         }
     }
 
@@ -104,11 +116,11 @@ class ProfileViewModel(
         }
     }
 
-    fun onVerifyCurrentPassword(current: String, onResult: (Boolean, String?) -> Unit) {
+    fun onVerifyCurrentPassword(current: String, onResult: (Boolean, com.bearkicks.app.core.errors.ErrorKey?) -> Unit) {
         val authUser = FirebaseAuth.getInstance().currentUser
         val email = authUser?.email
         if (authUser == null || email == null) {
-            onResult(false, "No hay sesión activa")
+            onResult(false, com.bearkicks.app.core.errors.ErrorKey.NOT_AUTHENTICATED)
             return
         }
         val credential = EmailAuthProvider.getCredential(email, current)
@@ -116,14 +128,7 @@ class ProfileViewModel(
             if (task.isSuccessful) {
                 onResult(true, null)
             } else {
-                val raw = task.exception?.message ?: "Contraseña actual incorrecta"
-                val mapped = when {
-                    raw.contains("auth credential", ignoreCase = true) -> "La contraseña actual es incorrecta o la sesión expiró"
-                    raw.contains("invalid", ignoreCase = true) -> "Credenciales inválidas"
-                    raw.contains("expired", ignoreCase = true) -> "La sesión expiró. Inicia sesión nuevamente."
-                    else -> raw
-                }
-                onResult(false, mapped)
+                onResult(false, com.bearkicks.app.core.errors.ErrorKey.WRONG_CURRENT_PASSWORD)
             }
         }
     }

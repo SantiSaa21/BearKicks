@@ -1,5 +1,8 @@
 package com.bearkicks.app.features.auth.domain.model.vo
 
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
+
 @JvmInline
 value class Password private constructor(val value: String) {
     companion object {
@@ -9,7 +12,7 @@ value class Password private constructor(val value: String) {
             val v = input.trim()
             return if (v.length >= 8 && v.contains(LETTER) && v.contains(DIGIT))
                 Result.success(Password(v))
-            else Result.failure(IllegalArgumentException("La contraseña debe tener mínimo 8 caracteres, con letras y números"))
+            else Result.failure(DomainException(ErrorKey.INVALID_PASSWORD_RULES))
         }
     }
 }

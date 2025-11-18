@@ -139,4 +139,30 @@
     <!-- Validation generics -->
     <string name="invalid_number">Número inválido</string>
     <string name="invalid_name">Nombre inválido</string>
+
+    <!-- Domain error texts -->
+    <string name="error_not_authenticated">No autenticado</string>
+    <string name="error_user_missing_email">Usuario sin email</string>
+    <string name="error_passwords_do_not_match">Las contraseñas no coinciden</string>
+    <string name="error_wrong_current_password">Contraseña actual incorrecta</string>
+    <string name="error_too_many_attempts">Demasiados intentos, espera unos minutos</string>
+    <string name="error_change_password_generic">Error al cambiar contraseña</string>
+    <string name="error_invalid_first_name_rules">El nombre debe tener solo letras (2-50) sin espacios</string>
+    <string name="error_invalid_last_name_rules">Apellido inválido (palabras de ≥2 letras, total máximo 60)</string>
+    <string name="error_invalid_username_rules">Username inválido (4-25 caracteres: letras, números, guion y guion bajo)</string>
+    <string name="error_invalid_email">Email inválido</string>
+    <string name="error_invalid_phone_rules">Teléfono inválido (8 dígitos iniciando en 6 o 7)</string>
+    <string name="error_invalid_address_rules">Dirección inválida (10-120 caracteres y debe incluir Cochabamba)</string>
+    <string name="error_must_be_adult">Debes ser mayor de 18 años</string>
+    <string name="error_invalid_password_rules">La contraseña debe tener mínimo 8 caracteres, con letras y números</string>
+    <string name="error_image_read">No se pudo leer la imagen</string>
+    <string name="error_image_open">No se pudo abrir la imagen</string>
+    <string name="error_register">Error al registrar</string>
+    <string name="error_cart_empty">Carrito vacío</string>
+    <string name="error_card_number_length">Número de tarjeta inválido (13-19 dígitos)</string>
+    <string name="error_card_number_luhn">Número de tarjeta inválido</string>
+    <string name="error_expiry_format">Formato MM/YY inválido</string>
+    <string name="error_expiry_expired">La tarjeta está vencida</string>
+    <string name="error_cvv_invalid">CVV inválido</string>
+    <string name="error_cardholder_invalid">Nombre del titular inválido</string>
 </resources>

@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.*
 import org.junit.Test
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 private class FakeUpdateRepo : IAuthRepository {
     private val state = MutableStateFlow<UserModel?>(null)
@@ -42,12 +44,14 @@ class UpdateProfileUseCaseTest {
     @Test fun update_invalid_phone() = runBlocking {
         val result = useCase(phone = "123")
         assertTrue(result.isFailure)
-        assertEquals("Teléfono inválido (8 dígitos iniciando en 6 o 7)", result.exceptionOrNull()?.message)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.INVALID_PHONE_RULES, ex.key)
     }
 
     @Test fun update_invalid_address() = runBlocking {
         val result = useCase(address = "Av America 123 La Paz")
         assertTrue(result.isFailure)
-        assertEquals("Dirección inválida (10-120 caracteres y debe incluir Cochabamba)", result.exceptionOrNull()?.message)
+        val ex = result.exceptionOrNull() as DomainException
+        assertEquals(ErrorKey.INVALID_ADDRESS_RULES, ex.key)
     }
 }

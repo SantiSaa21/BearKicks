@@ -7,6 +7,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
 
 data class ProfileDto(
     val firstName: String? = null,
@@ -80,7 +82,7 @@ class AuthFirebaseDataSource(
 
     suspend fun login(email: String, password: String): UserModel {
         val result = auth.signInWithEmailAndPassword(email, password).await()
-        val user = result.user ?: throw IllegalStateException("No se pudo iniciar sesión")
+        val user = result.user ?: throw DomainException(ErrorKey.GENERIC_ERROR)
         val dto = userNode(user.uid).get().await().getValue(ProfileDto::class.java)
         return UserModel(
             id = user.uid,
@@ -109,7 +111,7 @@ class AuthFirebaseDataSource(
         photoPath: String?
     ): UserModel {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
-        val user = result.user ?: throw IllegalStateException("No se pudo crear el usuario")
+        val user = result.user ?: throw DomainException(ErrorKey.GENERIC_ERROR)
         val now = System.currentTimeMillis()
         // Multi-path update para nodo usuario + índice de username
         val updates = mapOf(
@@ -150,7 +152,7 @@ class AuthFirebaseDataSource(
         address: String? = null,
         photoPath: String? = null
     ): UserModel {
-        val user = auth.currentUser ?: throw IllegalStateException("No autenticado")
+        val user = auth.currentUser ?: throw DomainException(ErrorKey.NOT_AUTHENTICATED)
         val updates = mutableMapOf<String, Any?>()
         if (firstName != null) updates["firstName"] = firstName
         if (lastName != null) updates["lastName"] = lastName

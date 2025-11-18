@@ -1,5 +1,8 @@
 package com.bearkicks.app.features.auth.domain.model.vo
 
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
+
 @JvmInline
 value class Email private constructor(val value: String) {
     companion object {
@@ -10,7 +13,7 @@ value class Email private constructor(val value: String) {
         fun create(input: String): Result<Email> {
             val trimmed = input.trim()
             return if (EMAIL_REGEX.matches(trimmed)) Result.success(Email(trimmed))
-            else Result.failure(IllegalArgumentException("Email inválido"))
+            else Result.failure(DomainException(ErrorKey.INVALID_EMAIL))
         }
     }
 }

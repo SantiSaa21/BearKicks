@@ -1,5 +1,8 @@
 package com.bearkicks.app.features.auth.domain.model.vo
 
+import com.bearkicks.app.core.errors.DomainException
+import com.bearkicks.app.core.errors.ErrorKey
+
 @JvmInline
 value class Username private constructor(val value: String) {
     companion object {
@@ -7,7 +10,7 @@ value class Username private constructor(val value: String) {
         fun create(input: String): Result<Username> {
             val v = input.trim()
             return if (REGEX.matches(v)) Result.success(Username(v))
-            else Result.failure(IllegalArgumentException("Username inválido (4-25 caracteres: letras, números, guion y guion bajo)"))
+            else Result.failure(DomainException(ErrorKey.INVALID_USERNAME_RULES))
         }
     }
 }
