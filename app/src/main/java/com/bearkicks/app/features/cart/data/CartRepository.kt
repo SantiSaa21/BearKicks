@@ -5,8 +5,6 @@ import com.bearkicks.app.features.cart.data.database.dao.OrdersDao
 import com.bearkicks.app.features.cart.data.database.entity.CartItemEntity
 import com.bearkicks.app.features.cart.data.database.entity.OrderEntity
 import com.bearkicks.app.features.cart.data.database.entity.OrderItemEntity
-import com.bearkicks.app.features.cart.data.database.entity.OrderPaymentEntity
-import com.bearkicks.app.features.cart.domain.model.payment.PaymentInfo
 import com.bearkicks.app.features.cart.domain.model.CartItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -20,10 +18,8 @@ interface ICartRepository {
     suspend fun remove(id: String)
     suspend fun clear(userId: String)
     suspend fun placeOrder(userId: String, items: List<CartItem>, total: Double): String
-    suspend fun placeOrderWithPayment(userId: String, items: List<CartItem>, total: Double, payment: PaymentInfo): String
     fun observeOrders(userId: String): Flow<List<OrderEntity>>
     fun observeOrderItems(orderId: String): Flow<List<OrderItemEntity>>
-    fun observePayment(orderId: String): Flow<OrderPaymentEntity?>
     suspend fun clearOrders(userId: String)
     suspend fun deleteOrder(orderId: String)
 }
@@ -60,19 +56,9 @@ class CartRepository(
         return orderId
     }
 
-    override suspend fun placeOrderWithPayment(userId: String, items: List<CartItem>, total: Double, payment: PaymentInfo): String {
-        val orderId = placeOrder(userId, items, total)
-        val entity = when (payment) {
-            is PaymentInfo.Card -> OrderPaymentEntity(orderId, payment.method.name, payment.brand, payment.last4, null, null)
-            is PaymentInfo.Qr -> OrderPaymentEntity(orderId, payment.method.name, null, null, payment.provider, payment.payloadHash)
-        }
-        ordersDao.insertPayment(entity)
-        return orderId
-    }
 
     override fun observeOrders(userId: String): Flow<List<OrderEntity>> = ordersDao.observeOrders(userId)
     override fun observeOrderItems(orderId: String): Flow<List<OrderItemEntity>> = ordersDao.observeOrderItems(orderId)
-    override fun observePayment(orderId: String): Flow<OrderPaymentEntity?> = ordersDao.observePayment(orderId)
     override suspend fun clearOrders(userId: String) { ordersDao.clearUserOrders(userId) }
     override suspend fun deleteOrder(orderId: String) { ordersDao.deleteOrderCascade(orderId) }
 

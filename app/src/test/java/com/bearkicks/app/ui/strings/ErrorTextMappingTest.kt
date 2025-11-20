@@ -11,8 +11,5 @@ class ErrorTextMappingTest {
         assertEquals(R.string.error_cart_empty, errorTextRes(ErrorKey.CART_EMPTY))
     }
 
-    @Test
-    fun `card number luhn invalid maps to resource id`() {
-        assertEquals(R.string.error_card_number_luhn, errorTextRes(ErrorKey.CARD_NUMBER_LUHN_INVALID))
-    }
+    // Payment error keys removed; no longer tested.
 }

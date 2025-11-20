@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.bearkicks.app.features.cart.domain.usecase.ObserveOrderItemsUseCase
 import com.bearkicks.app.features.cart.domain.usecase.ObserveOrdersUseCase
-import com.bearkicks.app.features.cart.domain.usecase.ObserveOrderPaymentUseCase
 import com.bearkicks.app.features.cart.domain.usecase.DeleteOrderUseCase
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
@@ -54,7 +53,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 fun OrdersHistoryScreen(onBack: () -> Unit) {
     val observeOrders: ObserveOrdersUseCase = koinInject()
     val orders by observeOrders().collectAsState(initial = emptyList())
-    val observePayment: ObserveOrderPaymentUseCase = koinInject()
     val deleteOrder: DeleteOrderUseCase = koinInject()
     val scope = rememberCoroutineScope()
 
@@ -77,7 +75,6 @@ fun OrdersHistoryScreen(onBack: () -> Unit) {
                 val fmt = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()) }
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(orders, key = { it.orderId }) { order ->
-                        val payment by observePayment(order.orderId).collectAsState(initial = null)
                         Card(
                             shape = RoundedCornerShape(12.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
@@ -90,14 +87,7 @@ fun OrdersHistoryScreen(onBack: () -> Unit) {
                                     }
                                     Text(stringResource(id = com.bearkicks.app.R.string.price_bob, "%.2f".format(order.total)), style = MaterialTheme.typography.titleMedium)
                                 }
-                                payment?.let {
-                                    val label = when (it.method) {
-                                        "CARD" -> stringResource(id = com.bearkicks.app.R.string.payment_card_mask, it.last4 ?: "----")
-                                        "QR" -> stringResource(id = com.bearkicks.app.R.string.payment_qr_hash, it.payloadHash?.take(8) ?: "")
-                                        else -> it.method
-                                    }
-                                    Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
-                                }
+                                Text(stringResource(id = com.bearkicks.app.R.string.simulated_purchase_tag), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                                 OrderItemsStrip(orderId = order.orderId)
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                                     TextButton(onClick = { scope.launch { deleteOrder(order.orderId) } }) { Text(stringResource(id = com.bearkicks.app.R.string.common_delete)) }

@@ -31,13 +31,7 @@ fun errorTextRes(key: ErrorKey): Int = when (key) {
     // Cart / checkout
     ErrorKey.CART_EMPTY -> R.string.error_cart_empty
 
-    // Card/payment
-    ErrorKey.CARD_NUMBER_INVALID_LENGTH -> R.string.error_card_number_length
-    ErrorKey.CARD_NUMBER_LUHN_INVALID -> R.string.error_card_number_luhn
-    ErrorKey.EXPIRY_FORMAT_INVALID -> R.string.error_expiry_format
-    ErrorKey.EXPIRY_EXPIRED -> R.string.error_expiry_expired
-    ErrorKey.CVV_INVALID -> R.string.error_cvv_invalid
-    ErrorKey.CARDHOLDER_INVALID -> R.string.error_cardholder_invalid
+    // (Payment validation removed)
 
     // Generic fallback
     ErrorKey.GENERIC_ERROR -> R.string.error_generic

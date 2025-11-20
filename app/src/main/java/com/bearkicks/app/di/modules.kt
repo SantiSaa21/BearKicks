@@ -43,9 +43,6 @@ import com.bearkicks.app.features.cart.domain.usecase.AddToCartUseCase
 import com.bearkicks.app.features.cart.domain.usecase.ClearCartUseCase
 import com.bearkicks.app.features.cart.domain.usecase.ObserveCartUseCase
 import com.bearkicks.app.features.cart.domain.usecase.PlaceOrderUseCase
-import com.bearkicks.app.features.cart.domain.usecase.CheckoutWithCardUseCase
-import com.bearkicks.app.features.cart.domain.usecase.CheckoutWithQrUseCase
-import com.bearkicks.app.features.cart.domain.usecase.ObserveOrderPaymentUseCase
 import com.bearkicks.app.features.cart.domain.usecase.DeleteOrderUseCase
 import com.bearkicks.app.features.cart.domain.usecase.RemoveFromCartUseCase
 import com.bearkicks.app.features.cart.domain.usecase.ObserveOrdersUseCase
@@ -120,9 +117,6 @@ val appModule = module {
     factory { RemoveFromCartUseCase(get()) }
     factory { ClearCartUseCase(get()) { FirebaseAuth.getInstance().currentUser?.uid ?: "guest" } }
     factory { PlaceOrderUseCase(get()) { FirebaseAuth.getInstance().currentUser?.uid ?: "guest" } }
-    factory { CheckoutWithCardUseCase(get()) { FirebaseAuth.getInstance().currentUser?.uid ?: "guest" } }
-    factory { CheckoutWithQrUseCase(get()) { FirebaseAuth.getInstance().currentUser?.uid ?: "guest" } }
-    factory { ObserveOrderPaymentUseCase(get()) }
     factory { DeleteOrderUseCase(get()) }
     factory { ObserveOrdersUseCase(get()) { FirebaseAuth.getInstance().currentUser?.uid ?: "guest" } }
     factory { ObserveOrderItemsUseCase(get()) }
@@ -132,7 +126,7 @@ val appModule = module {
     viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ShopViewModel(get(), get(), get()) }
     viewModel { WishListViewModel(get(), get()) }
-    viewModel { CartViewModel(get(), get(), get(), get(), get()) }
+    viewModel { CartViewModel(get(), get(), get()) }
     viewModel { (id: String) -> ShoeDetailViewModel(id, get(), get(), get(), get(), get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { RegisterViewModel(get()) }

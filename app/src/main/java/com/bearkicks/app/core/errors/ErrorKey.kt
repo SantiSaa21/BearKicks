@@ -30,13 +30,7 @@ enum class ErrorKey {
     // Cart / checkout
     CART_EMPTY,
 
-    // Card/payment validation
-    CARD_NUMBER_INVALID_LENGTH,
-    CARD_NUMBER_LUHN_INVALID,
-    EXPIRY_FORMAT_INVALID,
-    EXPIRY_EXPIRED,
-    CVV_INVALID,
-    CARDHOLDER_INVALID,
+    // (Payment validation removed)
 
     // Generic fallback
     GENERIC_ERROR,

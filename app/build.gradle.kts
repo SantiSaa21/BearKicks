@@ -1,3 +1,8 @@
+import java.io.File
+import java.util.Properties
+import java.net.URL
+import java.net.HttpURLConnection
+ 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -55,7 +60,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("com.google.zxing:core:3.5.2")
     implementation(libs.androidx.compose.material.icons.extended)
 
     implementation(libs.androidx.navigation.runtime.ktx)
@@ -147,6 +151,102 @@ tasks.register("verifyGoogleServices") {
 
 // Ensure presence before any build tasks
 tasks.named("preBuild").configure { dependsOn("verifyGoogleServices") }
+
+// --- Localise.biz Strings Download ---
+// Descarga las strings de Localise.biz antes de compilar si hay API key.
+// Se salta silenciosamente si no hay clave (ej: contributors sin acceso o CI limitado).
+
+fun getLocalProperty(name: String): String? {
+    val propsFile = rootProject.file("local.properties")
+    if (!propsFile.exists()) return null
+    return Properties().apply { propsFile.inputStream().use { load(it) } }.getProperty(name)
+}
+
+val localeMapping = mapOf(
+    // en-US va al folder base para mantener fallback
+    "en-US" to "values",
+    "es-ES" to "values-es",
+    "es-BO" to "values-es-rBO",
+    "zh-CN" to "values-zh-rCN"
+)
+
+fun downloadFile(url: String, target: File) {
+    val content = URL(url).readText()
+    if (!target.parentFile.exists()) target.parentFile.mkdirs()
+    target.writeText(content)
+}
+
+tasks.register("downloadLocoStrings") {
+    group = "localisation"
+    description = "Descarga strings.xml desde Localise.biz para cada locale configurado"
+    doLast {
+        val apiKey = System.getenv("LOCO_API_KEY") ?: getLocalProperty("LOCO_API_KEY")
+        if (apiKey.isNullOrBlank()) {
+            logger.warn("[downloadLocoStrings] Sin LOCO_API_KEY: se omite descarga de traducciones.")
+            return@doLast
+        }
+        val projectId = System.getenv("LOCO_PROJECT_ID") ?: getLocalProperty("LOCO_PROJECT_ID")
+        if (projectId.isNullOrBlank()) {
+            logger.warn("[downloadLocoStrings] Sin LOCO_PROJECT_ID: se omite descarga.")
+            return@doLast
+        }
+        // Algunos proyectos no requieren projectId explícito en la ruta (token ya lo asocia)
+        localeMapping.forEach { (localeCode, folderName) ->
+            // Endpoint correcto: /api/export/locale/<LOCALE>.xml?format=android&key=TOKEN
+            val url = "https://localise.biz/api/export/locale/${localeCode}.xml?format=android&key=$apiKey"
+            val target = file("src/main/res/$folderName/strings.xml")
+            logger.lifecycle("[downloadLocoStrings] Descargando $localeCode → ${target.path}")
+            try {
+                downloadFile(url, target)
+            } catch (e: Exception) {
+                logger.error("[downloadLocoStrings] Error descargando $localeCode: ${e.message}")
+            }
+        }
+    }
+}
+
+// --- Localise.biz Upload (subir strings base) ---
+// Sube el archivo base (values/strings.xml) al proyecto para crear/actualizar assets.
+// Usa la misma LOCO_API_KEY (full access). Evita sobreescribir traducciones; sólo agrega/actualiza claves.
+tasks.register("uploadLocoStrings") {
+    group = "localisation"
+    description = "Sube el archivo base de strings.xml al proyecto Localise.biz"
+    doLast {
+        val apiKey = System.getenv("LOCO_API_KEY") ?: getLocalProperty("LOCO_API_KEY")
+        val projectId = System.getenv("LOCO_PROJECT_ID") ?: getLocalProperty("LOCO_PROJECT_ID")
+        if (apiKey.isNullOrBlank() || projectId.isNullOrBlank()) {
+            logger.warn("[uploadLocoStrings] Falta LOCO_API_KEY o LOCO_PROJECT_ID; se omite upload.")
+            return@doLast
+        }
+        val baseFile = file("src/main/res/values/strings.xml")
+        if (!baseFile.exists()) {
+            logger.warn("[uploadLocoStrings] No existe archivo base: ${'$'}{baseFile.path}")
+            return@doLast
+        }
+        val xml = baseFile.readText()
+        // Endpoint de import XML (según docs de Localise). Uso de POST simple.
+        val url = URL("https://localise.biz/api/import/xml?locale=en-US&overwrite=false&key=${'$'}apiKey")
+        try {
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.doOutput = true
+            conn.setRequestProperty("Content-Type", "application/xml; charset=utf-8")
+            conn.outputStream.use { it.write(xml.toByteArray(Charsets.UTF_8)) }
+            val code = conn.responseCode
+            val resp = (conn.inputStream ?: conn.errorStream).bufferedReader().readText()
+            if (code in 200..299) {
+                logger.lifecycle("[uploadLocoStrings] OK ($code). Respuesta: $resp")
+            } else {
+                logger.error("[uploadLocoStrings] Error ($code). Respuesta: $resp")
+            }
+        } catch (e: Exception) {
+            logger.error("[uploadLocoStrings] Excepción: ${e.message}")
+        }
+    }
+}
+
+// Asegurar descarga antes de compilar (después de verificación de google-services)
+tasks.named("preBuild").configure { dependsOn("downloadLocoStrings") }
 
 // Aplicar plugin Google Services sólo si NO se pasa -PdisableFirebase
 if (!project.hasProperty("disableFirebase")) {
