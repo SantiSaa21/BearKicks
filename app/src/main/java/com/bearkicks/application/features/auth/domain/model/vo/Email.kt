@@ -1,0 +1,19 @@
+package com.bearkicks.application.features.auth.domain.model.vo
+
+import com.bearkicks.application.core.errors.DomainException
+import com.bearkicks.application.core.errors.ErrorKey
+
+@JvmInline
+value class Email private constructor(val value: String) {
+    companion object {
+        private val EMAIL_REGEX = Regex(
+            pattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$",
+            option = RegexOption.IGNORE_CASE
+        )
+        fun create(input: String): Result<Email> {
+            val trimmed = input.trim()
+            return if (EMAIL_REGEX.matches(trimmed)) Result.success(Email(trimmed))
+            else Result.failure(DomainException(ErrorKey.INVALID_EMAIL))
+        }
+    }
+}

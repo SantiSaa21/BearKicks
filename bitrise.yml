@@ -39,7 +39,7 @@ workflows:
                       {
                         "client_info": {
                           "mobilesdk_app_id": "1:123456789012:android:stubstubstub",
-                          "android_client_info": {"package_name": "com.bearkicks.app"}
+                          "android_client_info": {"package_name": "com.bearkicks.application"}
                         },
                         "oauth_client": [],
                         "api_key": [{"current_key": "STUB_KEY"}],

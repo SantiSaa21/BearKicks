@@ -12,15 +12,15 @@ plugins {
 }
 
 android {
-    namespace = "com.bearkicks.app"
+    namespace = "com.bearkicks.application"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.bearkicks.app"
+        applicationId = "com.bearkicks.application"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -131,7 +131,7 @@ tasks.register("verifyGoogleServices") {
                                                 {
                                                     "client_info": {
                                                         "mobilesdk_app_id": "1:123456789012:android:stubstubstub",
-                                                        "android_client_info": {"package_name": "com.bearkicks.app"}
+                                                        "android_client_info": {"package_name": "com.bearkicks.application"}
                                                     },
                                                     "oauth_client": [],
                                                     "api_key": [{"current_key": "STUB_KEY"}],
