@@ -105,6 +105,10 @@ import com.bearkicks.app.ui.theme.BKBrandSecondary
 import com.bearkicks.app.ui.theme.BKBrandAccent
 import com.bearkicks.app.ui.theme.BKNeutral95
 import com.bearkicks.app.ui.theme.BKNeutral100
+import com.bearkicks.app.i18n.LanguageManager
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
+import android.content.Intent
 
 @Composable
 fun ProfileScreen(onLoggedOut: () -> Unit, onSeeAllOrders: () -> Unit) {
@@ -152,6 +156,8 @@ private fun ProfileContent(
     var editOpen = rememberSaveable { mutableStateOf(false) }
     var passwordOpen = rememberSaveable { mutableStateOf(false) }
     var passwordResult = rememberSaveable { mutableStateOf<Result<Unit>?>(null) }
+    var languageOpen = rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
     // Picker ya no usa diálogo manual
     val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let { onPickPhoto(it) }
@@ -214,6 +220,7 @@ private fun ProfileContent(
                 ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_edit), icon = Icons.Filled.Edit) { editOpen.value = true }
                 ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_change_password), icon = Icons.Filled.Lock) { passwordOpen.value = true }
                 ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_orders), icon = Icons.Filled.ShoppingBag) { onSeeAllOrders() }
+                ActionItem(text = stringResource(id = com.bearkicks.app.R.string.language_settings_action), icon = Icons.Filled.ChevronRight) { languageOpen.value = true }
                 ActionItem(text = stringResource(id = com.bearkicks.app.R.string.profile_action_logout), icon = Icons.Filled.ExitToApp, danger = true) { onLogout() }
             }
         }
@@ -244,6 +251,16 @@ private fun ProfileContent(
                 },
                 onVerifyCurrent = { pwd, cb -> onVerifyCurrentPassword(pwd, cb) }
             )
+        }
+
+        if (languageOpen.value) {
+            LanguageDialog(onDismiss = { languageOpen.value = false }, onApply = { lang ->
+                LanguageManager.setLanguage(context, lang)
+                val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                (context as? Activity)?.finish()
+            })
         }
 
         // Diálogo manual de foto eliminado (usamos picker)
@@ -556,4 +573,53 @@ private fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label
             }
         }
     }
+}
+
+@Composable
+private fun LanguageDialog(onDismiss: () -> Unit, onApply: (LanguageManager.AppLanguage) -> Unit) {
+    val context = LocalContext.current
+    val current = LanguageManager.getSavedLanguage(context)
+    var selected by rememberSaveable { mutableStateOf(current) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(id = com.bearkicks.app.R.string.language_settings_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(id = com.bearkicks.app.R.string.language_current, displayName(selected)))
+                LanguageOptionRow(label = stringResource(id = com.bearkicks.app.R.string.language_spanish), option = LanguageManager.AppLanguage.SPANISH, selected = selected) { selected = it }
+                LanguageOptionRow(label = stringResource(id = com.bearkicks.app.R.string.language_english), option = LanguageManager.AppLanguage.ENGLISH, selected = selected) { selected = it }
+                LanguageOptionRow(label = stringResource(id = com.bearkicks.app.R.string.language_chinese), option = LanguageManager.AppLanguage.CHINESE, selected = selected) { selected = it }
+                Text(stringResource(id = com.bearkicks.app.R.string.language_restart_notice), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onApply(selected) }) {
+                Text(stringResource(id = com.bearkicks.app.R.string.language_apply_and_restart))
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(id = com.bearkicks.app.R.string.common_cancel)) } }
+    )
+}
+
+@Composable
+private fun LanguageOptionRow(label: String, option: LanguageManager.AppLanguage, selected: LanguageManager.AppLanguage, onSelect: (LanguageManager.AppLanguage) -> Unit) {
+    val isSelected = selected == option
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (isSelected) BKBrandPrimaryLight.copy(alpha = 0.35f) else MaterialTheme.colorScheme.surfaceVariant)
+            .padding(12.dp)
+    ) {
+        Text(label, modifier = Modifier.weight(1f), color = if (isSelected) BKBrandPrimary else MaterialTheme.colorScheme.onSurfaceVariant)
+        OutlinedButton(onClick = { onSelect(option) }, shape = RoundedCornerShape(50)) {
+            Text(if (isSelected) "✓" else "" )
+        }
+    }
+}
+
+private fun displayName(lang: LanguageManager.AppLanguage): String = when (lang) {
+    LanguageManager.AppLanguage.SPANISH -> "Español"
+    LanguageManager.AppLanguage.ENGLISH -> "English"
+    LanguageManager.AppLanguage.CHINESE -> "中文"
 }

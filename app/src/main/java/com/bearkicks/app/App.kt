@@ -18,6 +18,8 @@ import org.koin.core.context.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Aplicar idioma guardado antes de inicializar librerías que puedan leer recursos.
+        com.bearkicks.app.i18n.LanguageManager.applySavedLanguage(this)
         startKoin {
             androidContext(this@App)
             modules(appModule)

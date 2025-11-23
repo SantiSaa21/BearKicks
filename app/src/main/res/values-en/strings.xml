@@ -1,0 +1,135 @@
+<resources>
+    <string name="app_name">BearKicks</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+
+    <string name="field_first_name">First name</string>
+    <string name="field_last_name">Last name</string>
+    <string name="field_phone">Phone</string>
+    <string name="field_address">Address</string>
+    <string name="field_current_password">Current password</string>
+    <string name="field_new_password">New password</string>
+    <string name="field_confirm_password">Confirm password</string>
+
+    <string name="profile_edit_title">Edit profile</string>
+    <string name="profile_avatar_cd">Avatar</string>
+    <string name="profile_change_photo_cd">Change photo</string>
+    <string name="profile_change_password_title">Change password</string>
+    <string name="password_verifying">Verifying...</string>
+    <string name="password_current_ok">Current OK</string>
+
+    <string name="orders_title">Your orders</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_show">Show</string>
+    <string name="common_hide">Hide</string>
+
+    <string name="checkout_title">Checkout</string>
+    <string name="checkout_simulated">Purchase (simulated)</string>
+    <string name="simulated_purchase_notice">This is a simulated purchase. No real payment is processed.</string>
+    <string name="confirm_simulated_purchase_bob">Confirm simulated purchase Bs %1$s</string>
+    <string name="simulated_purchase_tag">Simulated purchase</string>
+
+    <string name="cd_favorite">Favorite</string>
+    <string name="cart_size_label">Size %1$s</string>
+    <string name="quantity_prefixed">x%1$d</string>
+    <string name="cart_total">Total</string>
+    <string name="checkout_pay">Purchase</string>
+    <string name="price_bob">Bs %1$s</string>
+    <string name="offer_price_bob">Offer: Bs %1$s</string>
+
+    <string name="nav_shop">Shop</string>
+    <string name="nav_wishlist">Wishlist</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="see_all">See all</string>
+    <string name="home_offers">Deals</string>
+    <string name="home_news">New arrivals</string>
+
+    <string name="search_label">Search</string>
+    <string name="search_placeholder">Name or brand</string>
+    <string name="empty_products">No products</string>
+    <string name="empty_results">No results</string>
+    <string name="detail_title">Detail</string>
+    <string name="label_size">Size</string>
+    <string name="favorite_add">Add to Favorites</string>
+    <string name="favorite_remove">Remove from Favorites</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="in_cart">In cart</string>
+
+    <string name="wishlist_empty">No favorites yet</string>
+
+    <string name="profile_logged_out">Not signed in</string>
+    <string name="profile_birthdate">Birth date</string>
+    <string name="profile_add_address_hint">Add your address for shipping</string>
+    <string name="profile_action_edit">Edit profile</string>
+    <string name="profile_action_change_password">Change password</string>
+    <string name="profile_action_orders">Order history</string>
+    <string name="profile_action_logout">Sign out</string>
+    <string name="password_updated">Password updated</string>
+    <string name="error_generic">Error</string>
+    <string name="password_new_same_as_current">New password can’t match current</string>
+    <string name="password_confirm_mismatch">Does not match</string>
+
+    <string name="orders_empty">No orders yet</string>
+    <string name="order_id_prefix">Order %1$s</string>
+    <string name="items_count">%1$d items</string>
+    <string name="and_more">… and %1$d more</string>
+
+    <string name="auth_login_title">Sign in</string>
+    <string name="field_email">Email</string>
+    <string name="field_password">Password</string>
+    <string name="field_username">Username</string>
+    <string name="auth_login">Login</string>
+    <string name="auth_create_account">Create account</string>
+    <string name="register_title">Create account</string>
+    <string name="register_action">Register</string>
+    <string name="birthdate_select">Select birth date</string>
+    <string name="birthdate_selected">Birth date: %1$s</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="required_first_name">First name required</string>
+    <string name="required_last_name">Last name required</string>
+    <string name="required_username">Username required</string>
+    <string name="required_email">Email required</string>
+    <string name="required_phone">Phone required</string>
+    <string name="required_address">Address required</string>
+    <string name="required_password">Password required</string>
+    <string name="invalid_birthdate">Invalid date</string>
+
+    <string name="promo_title_name">Hi, %1$s</string>
+    <string name="promo_text_daily">Check your deals and favorites today</string>
+    <string name="promo_fallback_name">👟 BearKicks fan</string>
+    <string name="promo_channel_name">Promotions</string>
+    <string name="promo_channel_desc">BearKicks reminders and news</string>
+
+    <string name="error_not_authenticated">Not authenticated</string>
+    <string name="error_user_missing_email">User missing email</string>
+    <string name="error_passwords_do_not_match">Passwords do not match</string>
+    <string name="error_wrong_current_password">Wrong current password</string>
+    <string name="error_too_many_attempts">Too many attempts, wait a few minutes</string>
+    <string name="error_change_password_generic">Error changing password</string>
+    <string name="error_invalid_first_name_rules">First name must be letters only (2-50) no spaces</string>
+    <string name="error_invalid_last_name_rules">Last name invalid (words ≥2 letters, total ≤60)</string>
+    <string name="error_invalid_username_rules">Invalid username (4-25: letters, digits, dash, underscore)</string>
+    <string name="error_invalid_email">Invalid email</string>
+    <string name="error_invalid_phone_rules">Invalid phone (8 digits starting with 6 or 7)</string>
+    <string name="error_invalid_address_rules">Invalid address (10-120 chars and must include Cochabamba)</string>
+    <string name="error_must_be_adult">You must be 18+</string>
+    <string name="error_invalid_password_rules">Password must be ≥8 with letters and digits</string>
+    <string name="error_image_read">Could not read image</string>
+    <string name="error_image_open">Could not open image</string>
+    <string name="error_register">Registration error</string>
+    <string name="error_cart_empty">Empty cart</string>
+    
+    <!-- Language settings -->
+    <string name="language_settings_title">Language</string>
+    <string name="language_settings_action">Change language</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_current">Current language: %1$s</string>
+    <string name="language_restart_notice">Restart the app to apply changes</string>
+    <string name="language_apply_and_restart">Apply &amp; Restart</string>
+</resources>

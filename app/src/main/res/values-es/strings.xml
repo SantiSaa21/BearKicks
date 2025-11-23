@@ -33,11 +33,11 @@
     <string name="checkout_pay">Comprar</string>
     <string name="price_bob">Bs %1$s</string>
     <string name="offer_price_bob">Oferta: Bs %1$s</string>
-    <string name="nav_shop">Shop</string>
-    <string name="nav_wishlist">Wishlist</string>
+    <string name="nav_shop">Tienda</string>
+    <string name="nav_wishlist">Favoritos</string>
     <string name="nav_home">Home</string>
-    <string name="nav_cart">Cart</string>
-    <string name="nav_profile">Profile</string>
+    <string name="nav_cart">Carrito</string>
+    <string name="nav_profile">Perfil</string>
     <string name="see_all">Ver todo</string>
     <string name="home_offers">Ofertas</string>
     <string name="home_news">Novedades</string>
@@ -68,9 +68,9 @@
     <string name="items_count">%1$d artículos</string>
     <string name="and_more">… y %1$d más</string>
     <string name="auth_login_title">Iniciar sesión</string>
-    <string name="field_email">Email</string>
+    <string name="field_email">Correo</string>
     <string name="field_password">Contraseña</string>
-    <string name="field_username">Username</string>
+    <string name="field_username">Usuario</string>
     <string name="auth_login">Entrar</string>
     <string name="auth_create_account">Crear cuenta</string>
     <string name="register_title">Crear cuenta</string>
@@ -80,7 +80,7 @@
     <string name="back_to_login">Volver a Iniciar sesión</string>
     <string name="required_first_name">El nombre es obligatorio</string>
     <string name="required_last_name">El apellido es obligatorio</string>
-    <string name="required_username">El username es obligatorio</string>
+    <string name="required_username">Usuario obligatorio</string>
     <string name="required_email">El email es obligatorio</string>
     <string name="required_phone">El teléfono es obligatorio</string>
     <string name="required_address">La dirección es obligatoria</string>
@@ -99,8 +99,8 @@
     <string name="error_change_password_generic">Error al cambiar contraseña</string>
     <string name="error_invalid_first_name_rules">El nombre debe tener solo letras (2-50) sin espacios</string>
     <string name="error_invalid_last_name_rules">Apellido inválido (palabras de ≥2 letras, total máximo 60)</string>
-    <string name="error_invalid_username_rules">Username inválido (4-25 caracteres: letras, números, guion y guion bajo)</string>
-    <string name="error_invalid_email">Email inválido</string>
+    <string name="error_invalid_username_rules">Usuario inválido (4-25: letras, números, guion y guion bajo)</string>
+    <string name="error_invalid_email">Correo inválido</string>
     <string name="error_invalid_phone_rules">Teléfono inválido (8 dígitos iniciando en 6 o 7)</string>
     <string name="error_invalid_address_rules">Dirección inválida (10-120 caracteres y debe incluir Cochabamba)</string>
     <string name="error_must_be_adult">Debes ser mayor de 18 años</string>
@@ -109,4 +109,13 @@
     <string name="error_image_open">No se pudo abrir la imagen</string>
     <string name="error_register">Error al registrar</string>
     <string name="error_cart_empty">Carrito vacío</string>
+    <!-- Ajustes idioma -->
+    <string name="language_settings_title">Idioma</string>
+    <string name="language_settings_action">Cambiar idioma</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">Inglés</string>
+    <string name="language_chinese">Chino</string>
+    <string name="language_current">Idioma actual: %1$s</string>
+    <string name="language_restart_notice">Reinicia la app para ver los cambios</string>
+    <string name="language_apply_and_restart">Aplicar y reiniciar</string>
 </resources>

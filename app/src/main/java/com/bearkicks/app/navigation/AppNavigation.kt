@@ -83,14 +83,8 @@ fun AppNavigation() {
     Scaffold(
         topBar = {
             if (showBars) {
-                val title = when (currentRoute) {
-                    Screen.Shop.route -> stringResource(id = R.string.nav_shop)
-                    Screen.Wishlist.route -> stringResource(id = R.string.nav_wishlist)
-                    Screen.Home.route -> stringResource(id = R.string.nav_home)
-                    Screen.Cart.route -> stringResource(id = R.string.nav_cart)
-                    Screen.Profile.route -> stringResource(id = R.string.nav_profile)
-                    else -> ""
-                }
+                val screen = Screen.fromRoute(currentRoute)
+                val title = screen?.let { stringResource(id = it.titleRes) } ?: ""
                 BKTopBar(title = title)
             }
         },

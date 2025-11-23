@@ -162,12 +162,13 @@ fun getLocalProperty(name: String): String? {
     return Properties().apply { propsFile.inputStream().use { load(it) } }.getProperty(name)
 }
 
+// Reordenado para que el idioma base (values/) ahora sea Español.
+// Mantener inglés separado evita sobrescribir las traducciones españolas al descargar.
 val localeMapping = mapOf(
-    // en-US va al folder base para mantener fallback
-    "en-US" to "values",
-    "es-ES" to "values-es",
-    "es-BO" to "values-es-rBO",
-    "zh-CN" to "values-zh-rCN"
+    "es-ES" to "values",          // Base ahora Español (España)
+    "es-BO" to "values-es-rBO",   // Variante Bolivia
+    "en-US" to "values-en",       // Inglés EEUU
+    "zh-CN" to "values-zh-rCN"    // Chino Simplificado (China)
 )
 
 fun downloadFile(url: String, target: File) {

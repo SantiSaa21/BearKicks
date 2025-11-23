@@ -1,5 +1,25 @@
 ## BearKicks Domain Validation & Checkout
 
+### Idiomas / Internacionalización
+La app ahora tiene Español como idioma base (`res/values/`). Carpetas añadidas:
+
+- `res/values-en/` Inglés
+- `res/values-zh-rCN/` Chino Simplificado
+
+Selector en runtime: `LanguageManager` (`app/src/main/java/com/bearkicks/app/i18n/LanguageManager.kt`).
+
+Cambiar idioma programáticamente:
+```kotlin
+LanguageManager.setLanguage(context, LanguageManager.AppLanguage.SPANISH)
+LanguageManager.setLanguage(context, LanguageManager.AppLanguage.ENGLISH)
+LanguageManager.setLanguage(context, LanguageManager.AppLanguage.CHINESE)
+```
+Se persiste en `SharedPreferences` (`settings.app_lang`). Se aplica al inicio en `App.onCreate`.
+
+Para volver a inglés como base: mover el contenido español a `values-es/`, copiar inglés a `values/` y ajustar `localeMapping` en `app/build.gradle.kts`.
+
+Los títulos en `Screen.kt` son literales; para soporte dinámico completo se pueden migrar a IDs de recursos.
+
 ### Value Objects
 Perfil: FirstName, LastName, PhoneNumber, Address, BirthDate, Username, Password.
 Pago: CardNumber (Luhn + brand + last4), ExpiryDate (MM/YY futuro), Cvv (3-4 dígitos), CardHolderName (solo letras y espacios, longitud segura).
