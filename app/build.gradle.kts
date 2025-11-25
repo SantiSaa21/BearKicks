@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
     // Quitamos aplicación directa del plugin de Google Services para poder deshabilitarlo en CI.
 }
 
