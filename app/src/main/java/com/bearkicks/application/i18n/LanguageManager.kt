@@ -18,6 +18,7 @@ object LanguageManager {
 
     enum class AppLanguage(val tag: String) {
         SPANISH("es"),
+        SPANISH_BOLIVIA("es-BO"),
         ENGLISH("en"),
         CHINESE("zh")
     }
