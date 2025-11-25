@@ -6,7 +6,6 @@ import com.bearkicks.application.core.errors.ErrorKey
 @JvmInline
 value class Phone private constructor(val value: String) {
     companion object {
-        // Cochabamba: 8 dígitos iniciando en 6 o 7
         private val PHONE_REGEX = Regex("^[67][0-9]{7}$")
         fun create(input: String): Result<Phone> {
             val v = input.trim()
@@ -19,7 +18,6 @@ value class Phone private constructor(val value: String) {
 @JvmInline
 value class Address private constructor(val value: String) {
     companion object {
-        // 10-120 caracteres, debe contener 'cochabamba'
         private val ADDRESS_REGEX = Regex("^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .,#-]{10,120}$")
         fun create(input: String): Result<Address> {
             val v = input.trim()

@@ -29,7 +29,7 @@ class RegisterUseCase(private val repo: IAuthRepository) {
             .flatMap { LastName.create(lastName) }
             .flatMap { Username.create(username) }
             .flatMap { Email.create(email) }
-            .flatMap { Phone.create(phone ?: "") } // phone es obligatorio por requisitos
+            .flatMap { Phone.create(phone ?: "") }
             .flatMap { Address.create(address ?: "") }
             .flatMap { BirthDate.create(birthDate) }
             .flatMap { Password.create(password).map {} }

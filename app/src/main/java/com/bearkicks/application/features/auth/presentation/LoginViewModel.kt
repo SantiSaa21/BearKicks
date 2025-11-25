@@ -37,7 +37,6 @@ class LoginViewModel(private val login: LoginUseCase) : ViewModel() {
 }
 
 private fun mapAuthError(t: Throwable): String {
-    // Firebase exceptions específicas
     return when (t) {
         is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo."
         is FirebaseAuthInvalidCredentialsException -> "Credenciales inválidas. Verifica tu correo y contraseña."

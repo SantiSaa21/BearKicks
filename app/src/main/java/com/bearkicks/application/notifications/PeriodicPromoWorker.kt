@@ -36,7 +36,6 @@ class PeriodicPromoWorker(
                 text = applicationContext.getString(R.string.promo_text_daily)
             )
 
-            // En modo DEBUG (flag de recursos), reprograma en 5 minutos
             if (applicationContext.resources.getBoolean(R.bool.bk_debug_promos)) {
                 scheduleNextDebug()
             }

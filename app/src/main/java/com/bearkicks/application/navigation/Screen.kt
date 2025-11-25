@@ -16,11 +16,9 @@ sealed class Screen(val route: String, @StringRes val titleRes: Int) {
 
     companion object {
         val all = listOf(Shop, Wishlist, Home, Cart, Profile, Login, Register, ShoeDetail, Orders)
-        // Devuelve la Screen correspondiente incluso si la ruta incluye parámetros (ej: "shoe_detail/123")
-        // Maneja rutas nulas o vacías devolviendo null en lugar de provocar NPE.
         fun fromRoute(route: String?): Screen? {
             if (route.isNullOrBlank()) return null
-            val base = route.substringBefore('/') // Soporta rutas con argumentos
+            val base = route.substringBefore('/')
             return all.firstOrNull { it?.route == base }
         }
     }

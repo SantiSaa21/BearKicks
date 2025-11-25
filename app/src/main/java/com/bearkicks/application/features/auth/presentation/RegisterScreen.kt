@@ -55,14 +55,13 @@ fun RegisterScreen(
     val phone = remember { mutableStateOf("") }
     val address = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-        // Errores por campo
-        val firstNameError = remember { mutableStateOf<String?>(null) }
-        val lastNameError = remember { mutableStateOf<String?>(null) }
-        val usernameError = remember { mutableStateOf<String?>(null) }
-        val emailError = remember { mutableStateOf<String?>(null) }
-        val phoneError = remember { mutableStateOf<String?>(null) }
-        val addressError = remember { mutableStateOf<String?>(null) }
-        val passwordError = remember { mutableStateOf<String?>(null) }
+    val firstNameError = remember { mutableStateOf<String?>(null) }
+    val lastNameError = remember { mutableStateOf<String?>(null) }
+    val usernameError = remember { mutableStateOf<String?>(null) }
+    val emailError = remember { mutableStateOf<String?>(null) }
+    val phoneError = remember { mutableStateOf<String?>(null) }
+    val addressError = remember { mutableStateOf<String?>(null) }
+    val passwordError = remember { mutableStateOf<String?>(null) }
     val birthDateEpoch = remember { mutableStateOf<Long?>(null) }
     val birthDateError = remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
@@ -194,7 +193,6 @@ fun RegisterScreen(
         }
         Spacer(Modifier.height(16.dp))
         BKButton(text = stringResource(id = R.string.register_action), modifier = Modifier.fillMaxWidth()) {
-            // Ejecutar validaciones finales usando VO mapeando a recursos
             firstNameError.value = Name.create(firstName.value).exceptionOrNull()?.let { e ->
                 (e as? DomainException)?.let { de -> context.getString(errorTextRes(de.key)) } ?: e.message
             }

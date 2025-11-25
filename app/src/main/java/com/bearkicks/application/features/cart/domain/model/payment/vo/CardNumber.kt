@@ -1,6 +1,5 @@
 package com.bearkicks.application.features.cart.domain.model.payment.vo
 
-// Removed payment validation – stub implementation.
 @JvmInline
 value class CardNumber private constructor(val sanitized: String) {
     val last4: String get() = "0000"

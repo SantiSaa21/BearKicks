@@ -150,7 +150,6 @@ private fun ProfileContent(
     var passwordResult = rememberSaveable { mutableStateOf<Result<Unit>?>(null) }
     var languageOpen = rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    // Picker ya no usa diálogo manual
     val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let { onPickPhoto(it) }
     }
@@ -165,7 +164,6 @@ private fun ProfileContent(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // Header minimalista
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Avatar(
@@ -190,7 +188,6 @@ private fun ProfileContent(
             }
         }
 
-        // Datos contacto
         Card(shape = RoundedCornerShape(18.dp), colors = CardDefaults.cardColors(containerColor = BKNeutral100)) {
             Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 state.user.birthDate?.let { bd ->
@@ -206,7 +203,6 @@ private fun ProfileContent(
             }
         }
 
-        // Acciones rápidas
         Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = BKBrandSecondary.copy(alpha = 0.55f))) {
             Column(Modifier.fillMaxWidth().padding(8.dp)) {
                 ActionItem(text = stringResource(id = com.bearkicks.application.R.string.profile_action_edit), icon = Icons.Filled.Edit) { editOpen.value = true }
@@ -254,8 +250,6 @@ private fun ProfileContent(
                 (context as? Activity)?.finish()
             })
         }
-
-        // Diálogo manual de foto eliminado (usamos picker)
     }
 }
 
@@ -342,7 +336,6 @@ private fun EditProfileDialog(
     )
 }
 
-// Eliminado UpdatePhotoPathDialog (ya no se necesita)
 @Composable
 private fun Avatar(url: String?, name: String, onPickPhoto: () -> Unit) {
     val initials = name.trim().split(" ").filter { it.isNotBlank() }.take(2).joinToString("") { it.first().uppercase() }

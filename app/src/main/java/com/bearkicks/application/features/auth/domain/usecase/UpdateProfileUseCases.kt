@@ -18,7 +18,6 @@ class UpdateProfileUseCase(private val repo: IAuthRepository) {
         address: String? = null,
         photoPath: String? = null
     ): Result<UserModel> {
-        // Validar solo campos presentes
         val validations = listOfNotNull(
             firstName?.let { Name.create(it) },
             lastName?.let { LastName.create(it) },

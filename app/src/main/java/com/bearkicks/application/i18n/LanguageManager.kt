@@ -7,11 +7,6 @@ import android.os.Build
 import android.os.LocaleList
 import java.util.Locale
 
-/**
- * Punto único para cambiar el idioma de la app en runtime.
- * Usa SharedPreferences para persistir selección. Llama a [applySavedLanguage] en App.onCreate.
- * Para cambiar manualmente: LanguageManager.setLanguage(context, AppLanguage.SPANISH)
- */
 object LanguageManager {
     private const val PREFS_NAME = "settings"
     private const val KEY_LANG = "app_lang"
@@ -51,7 +46,7 @@ object LanguageManager {
         }
         res.updateConfiguration(config, res.displayMetrics)
         if (ctx is Activity) {
-            ctx.recreate() // Forzar recomposición si es Activity normal
+            ctx.recreate()
         }
     }
 }

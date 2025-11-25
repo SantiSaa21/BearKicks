@@ -12,13 +12,6 @@ import java.io.ByteArrayOutputStream
 import com.bearkicks.application.core.errors.DomainException
 import com.bearkicks.application.core.errors.ErrorKey
 
-/**
- * Subida de foto de perfil sin Firebase Storage.
- *
- * Codifica la imagen seleccionada como JPEG comprimido y la guarda como
- * data URI (data:image/jpeg;base64,...) en el campo `photoPath` del usuario
- * en Realtime Database. De esta forma evitamos usar Storage y costos asociados.
- */
 class ChangeProfilePhotoUseCase(
     private val repo: IAuthRepository,
     private val auth: FirebaseAuth,
@@ -28,7 +21,6 @@ class ChangeProfilePhotoUseCase(
         val user = auth.currentUser ?: return Result.failure(DomainException(ErrorKey.NOT_AUTHENTICATED))
         return runCatching {
             val bytes = context.contentResolver.openInputStream(uri)?.use { input ->
-                // Decodificar con sampleo para evitar OOM en fotos grandes
                 val opts = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
                 val original = BitmapFactory.decodeStream(input, null, opts)
                     ?: throw DomainException(ErrorKey.IMAGE_READ_ERROR)
@@ -40,7 +32,6 @@ class ChangeProfilePhotoUseCase(
 
             val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
             val dataUri = "data:image/jpeg;base64,$base64"
-            // Actualizamos el perfil con la data URI
             repo.updateProfile(photoPath = dataUri).getOrThrow()
         }
     }

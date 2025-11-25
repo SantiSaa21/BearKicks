@@ -39,7 +39,6 @@ fun CartScreen(onCheckoutSuccess: (String) -> Unit) {
     val items = viewModel.items.collectAsState().value
     val total = viewModel.total.collectAsState().value
     val error = viewModel.error.collectAsState().value
-    // Simulated purchase only – QR/payment removed
     val showSheet = remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     Box(Modifier.fillMaxSize()) {
