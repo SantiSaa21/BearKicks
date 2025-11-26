@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
-    // Quitamos aplicación directa del plugin de Google Services para poder deshabilitarlo en CI.
 }
 
 android {
@@ -20,8 +19,8 @@ android {
         applicationId = "com.bearkicks.application"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 4
+        versionName = "1.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,12 +40,11 @@ android {
     }
     kotlinOptions { jvmTarget = "11" }
     buildFeatures { compose = true }
-    // Ensure BuildConfig is generated
     buildFeatures { buildConfig = true }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true // Evita NPE en clases Android no mockeadas
-        unitTests.isIncludeAndroidResources = true // Permite Robolectric/composed tests si se agregan
+        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
@@ -106,19 +104,14 @@ dependencies {
 
 }
 
-// --- Secrets / Safety Check ---
-// Fail early if the real google-services.json is missing (sample is not used by the plugin)
 tasks.register("verifyGoogleServices") {
     doLast {
         val real = file("google-services.json")
-        // Allow CI (e.g. Bitrise) to skip strict verification if the file
-        // is provided through secure env vars or not needed for pure unit tests.
         val isCi = System.getenv("CI")?.equals("true", ignoreCase = true) == true
         val skipFlag = System.getenv("GOOGLE_SERVICES_SKIP_VERIFY")?.equals("true", ignoreCase = true) == true
         val disableFirebaseProp = gradle.startParameter.projectProperties.containsKey("disableFirebase")
                 if (!real.exists()) {
             if (isCi || skipFlag || disableFirebaseProp) {
-                                // Crear stub para evitar fallo del plugin si se aplica accidentalmente.
                                 logger.warn("[verifyGoogleServices] Missing google-services.json on CI; generating stub.")
                                 real.writeText(
                                         """
@@ -150,12 +143,7 @@ tasks.register("verifyGoogleServices") {
     }
 }
 
-// Ensure presence before any build tasks
 tasks.named("preBuild").configure { dependsOn("verifyGoogleServices") }
-
-// --- Localise.biz Strings Download ---
-// Descarga las strings de Localise.biz antes de compilar si hay API key.
-// Se salta silenciosamente si no hay clave (ej: contributors sin acceso o CI limitado).
 
 fun getLocalProperty(name: String): String? {
     val propsFile = rootProject.file("local.properties")
@@ -163,13 +151,11 @@ fun getLocalProperty(name: String): String? {
     return Properties().apply { propsFile.inputStream().use { load(it) } }.getProperty(name)
 }
 
-// Reordenado para que el idioma base (values/) ahora sea Español.
-// Mantener inglés separado evita sobrescribir las traducciones españolas al descargar.
 val localeMapping = mapOf(
-    "es-ES" to "values",          // Base ahora Español (España)
-    "es-BO" to "values-es-rBO",   // Variante Bolivia
-    "en-US" to "values-en",       // Inglés EEUU
-    "zh-CN" to "values-zh-rCN"    // Chino Simplificado (China)
+    "es-ES" to "values",
+    "es-BO" to "values-es-rBO",
+    "en-US" to "values-en",
+    "zh-CN" to "values-zh-rCN"
 )
 
 fun downloadFile(url: String, target: File) {
@@ -192,9 +178,7 @@ tasks.register("downloadLocoStrings") {
             logger.warn("[downloadLocoStrings] Sin LOCO_PROJECT_ID: se omite descarga.")
             return@doLast
         }
-        // Algunos proyectos no requieren projectId explícito en la ruta (token ya lo asocia)
         localeMapping.forEach { (localeCode, folderName) ->
-            // Endpoint correcto: /api/export/locale/<LOCALE>.xml?format=android&key=TOKEN
             val url = "https://localise.biz/api/export/locale/${localeCode}.xml?format=android&key=$apiKey"
             val target = file("src/main/res/$folderName/strings.xml")
             logger.lifecycle("[downloadLocoStrings] Descargando $localeCode → ${target.path}")
@@ -207,9 +191,6 @@ tasks.register("downloadLocoStrings") {
     }
 }
 
-// --- Localise.biz Upload (subir strings base) ---
-// Sube el archivo base (values/strings.xml) al proyecto para crear/actualizar assets.
-// Usa la misma LOCO_API_KEY (full access). Evita sobreescribir traducciones; sólo agrega/actualiza claves.
 tasks.register("uploadLocoStrings") {
     group = "localisation"
     description = "Sube el archivo base de strings.xml al proyecto Localise.biz"
@@ -226,7 +207,6 @@ tasks.register("uploadLocoStrings") {
             return@doLast
         }
         val xml = baseFile.readText()
-        // Endpoint de import XML (según docs de Localise). Uso de POST simple.
         val url = URL("https://localise.biz/api/import/xml?locale=en-US&overwrite=false&key=${'$'}apiKey")
         try {
             val conn = url.openConnection() as HttpURLConnection
@@ -247,10 +227,8 @@ tasks.register("uploadLocoStrings") {
     }
 }
 
-// Asegurar descarga antes de compilar (después de verificación de google-services)
 tasks.named("preBuild").configure { dependsOn("downloadLocoStrings") }
 
-// Aplicar plugin Google Services sólo si NO se pasa -PdisableFirebase
 if (!project.hasProperty("disableFirebase")) {
     plugins.apply("com.google.gms.google-services")
 } else {

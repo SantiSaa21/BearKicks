@@ -13,9 +13,7 @@ object LanguageManager {
 
     enum class AppLanguage(val tag: String) {
         SPANISH("es"),
-        SPANISH_BOLIVIA("es-BO"),
-        ENGLISH("en"),
-        CHINESE("zh")
+        ENGLISH("en")
     }
 
     private fun prefs(ctx: Context): SharedPreferences = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

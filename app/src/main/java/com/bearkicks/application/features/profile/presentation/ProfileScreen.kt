@@ -572,9 +572,7 @@ private fun LanguageDialog(onDismiss: () -> Unit, onApply: (LanguageManager.AppL
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(id = com.bearkicks.application.R.string.language_current, displayName(selected)))
                 LanguageOptionRow(label = stringResource(id = com.bearkicks.application.R.string.language_spanish), option = LanguageManager.AppLanguage.SPANISH, selected = selected) { selected = it }
-                LanguageOptionRow(label = "Español (Bolivia)", option = LanguageManager.AppLanguage.SPANISH_BOLIVIA, selected = selected) { selected = it }
                 LanguageOptionRow(label = stringResource(id = com.bearkicks.application.R.string.language_english), option = LanguageManager.AppLanguage.ENGLISH, selected = selected) { selected = it }
-                LanguageOptionRow(label = stringResource(id = com.bearkicks.application.R.string.language_chinese), option = LanguageManager.AppLanguage.CHINESE, selected = selected) { selected = it }
                 Text(stringResource(id = com.bearkicks.application.R.string.language_restart_notice), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
@@ -606,7 +604,5 @@ private fun LanguageOptionRow(label: String, option: LanguageManager.AppLanguage
 
 private fun displayName(lang: LanguageManager.AppLanguage): String = when (lang) {
     LanguageManager.AppLanguage.SPANISH -> "Español"
-    LanguageManager.AppLanguage.SPANISH_BOLIVIA -> "Español (Bolivia)"
     LanguageManager.AppLanguage.ENGLISH -> "English"
-    LanguageManager.AppLanguage.CHINESE -> "中文"
 }

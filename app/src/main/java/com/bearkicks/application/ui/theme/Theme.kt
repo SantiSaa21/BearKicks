@@ -27,27 +27,6 @@ private val LightColors = lightColorScheme(
     scrim = BKScrim
 )
 
-private val DarkColors = darkColorScheme(
-    primary = BKBrandPrimary,
-    onPrimary = BKNeutral100,
-    primaryContainer = BKBrandPrimaryLight,
-    onPrimaryContainer = BKNeutral100,
-    secondary = BKBrandSecondary,
-    onSecondary = BKNeutral10,
-    tertiary = BKBrandAccent,
-    onTertiary = BKNeutral100,
-    background = BKBackgroundLight,
-    onBackground = BKOnBackgroundLight,
-    surface = BKSurfaceLight,
-    onSurface = BKOnSurfaceLight,
-    surfaceVariant = BKSurfaceVariantLight,
-    onSurfaceVariant = BKOnSurfaceVariantLight,
-    outline = BKOutline,
-    outlineVariant = BKOutlineVariant,
-    error = BKError,
-    scrim = BKScrim
-)
-
 @Composable
 fun BearKicksTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -55,7 +34,7 @@ fun BearKicksTheme(
     elevations: BKElevations = BKElevations(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) DarkColors else LightColors
+    val colors = if (darkTheme) LightColors else LightColors
     ProvideBKSpacing(spacing) {
         ProvideBKElevations(elevations) {
             MaterialTheme(
